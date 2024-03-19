@@ -128,3 +128,60 @@ def clear_pump_history():
     finally:
         if conn:
             conn.close()
+            
+def create_tables_profile():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS profiles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            soil_moisture_threshold INTEGER NOT NULL,
+            is_active INTEGER DEFAULT 0
+        )''')
+    conn.commit()
+    conn.close()
+
+def add_or_update_profile(name, threshold):
+    conn = create_connection()
+    cursor = conn.cursor()
+    # Check if the profile already exists
+    cursor.execute("SELECT id FROM profiles WHERE name = ?", (name,))
+    profile = cursor.fetchone()
+    if profile is None:
+        # If not, insert a new profile
+        cursor.execute("INSERT INTO profiles (name, soil_moisture_threshold) VALUES (?, ?)", (name, threshold))
+    else:
+        # If it does, update the existing profile
+        cursor.execute("UPDATE profiles SET soil_moisture_threshold = ? WHERE name = ?", (threshold, name))
+    conn.commit()
+    conn.close()
+
+
+def get_all_profiles():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM profiles")
+    profiles = cursor.fetchall()
+    conn.close()
+    return [{'id': profile[0], 'name': profile[1], 'soil_moisture_threshold': profile[2], 'is_active': profile[3]} for profile in profiles]
+
+def set_active_profile(profile_id):
+    conn = create_connection()
+    cursor = conn.cursor()
+    # Set all profiles to inactive
+    cursor.execute("UPDATE profiles SET is_active = 0")
+    # Set the selected profile to active
+    cursor.execute("UPDATE profiles SET is_active = 1 WHERE id = ?", (profile_id,))
+    conn.commit()
+    conn.close()
+
+def get_active_profile():
+    conn = create_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM profiles WHERE is_active = 1 LIMIT 1")
+    profile = cursor.fetchone()
+    conn.close()
+    if profile:
+        return {'id': profile[0], 'name': profile[1], 'soil_moisture_threshold': profile[2]}
+    return None

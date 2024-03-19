@@ -8,8 +8,8 @@ import busio
 import adafruit_mcp3xxx.mcp3008 as MCP
 from digitalio import DigitalInOut
 import board
+import math
 from adafruit_mcp3xxx.analog_in import AnalogIn
-
 from consts import RELAY_GPIO, PUMP_DURATION, PUMP_RUN_INTERVAL
 
 #setup relay
@@ -61,26 +61,45 @@ def skipPump():
 
 def get_soil_moisture():
     soil_value = chan.value / 64
-    return soil_value
-    
+    moisture_percentage = math.ceil((soil_value / 1024) * 100)
+    return moisture_percentage
+
+def test():
+    print( get_soil_moisture())
+
+# def activateChecknPump():
+#     soil_value = get_soil_moisture()
+#     if soil_value >= 50:
+#         print("soil too sus, watering...")
+#         print(soil_value)
+#         runPump()
+#     else:
+#         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+#         duration_str = f'{consts.PUMP_DURATION} seconds'
+
+#         entry = (readable_timestamp, 'Pump Run (failed, too wet)', duration_str)
+        
+#         db.log_pump_run(entry)
 def activateChecknPump():
-    # Read from the MCP3008 ADC
-    soil_value = chan.value / 64
-    print("Soil moisture: ", soil_value)
-    print('ADC Voltage: ' + str(chan.voltage) + 'V')
+    profile = db.get_active_profile()
+    if not profile:
+        print("No profile found. Using default threshold of 50.")
+        soil_moisture_threshold = 50
+    else:
+        soil_moisture_threshold = profile['soil_moisture_threshold']
     
-    if soil_value >= 700:
-        print("soil too sus, watering...")
+    soil_value = get_soil_moisture()
+    if soil_value >= soil_moisture_threshold:
+        print("Soil too dry, watering...")
         runPump()
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         duration_str = f'{consts.PUMP_DURATION} seconds'
 
-        entry = (readable_timestamp, 'Pump Run (failed, too wet)', duration_str)
-        
+        entry = (readable_timestamp, 'Pump Run Failed due too moisture still too high', duration_str)
         db.log_pump_run(entry)
             
-def heartbeat():
+def heartBeat():
     readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     entry = (readable_timestamp, 'Heartbeat', '1')
     
@@ -92,12 +111,16 @@ if __name__ == "__main__":
             runPump()
         elif sys.argv[1] == 'createdb':
             db.create_tables()
+        elif sys.argv[1] == 'createpf':
+            db.create_tables_profile()
         elif sys.argv[1] == 'check':
             activateChecknPump()
         elif sys.argv[1] == 'skip':
             skipPump()
+        elif sys.argv[1] == 'dokkyun':
+            heartBeat()
         else:
             print("Invalid argument. Available options are 'runnow' or 'createdb'.")
     else:
-        heartbeat()
+        heartBeat()
         poll()

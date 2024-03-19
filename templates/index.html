@@ -25,7 +25,7 @@
         
         <div class="system-info-box">
             <p class="system-info-label">CPU Temp</p>
-            <p class="system-info-value"><span id="cpuTemp">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} {% else %}N/A{% endif %}</span></p>
+            <p class="system-info-value"><span id="cpuTemp">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} 700700700{% else %}N/A{% endif %}</span></p>
         </div>
     
         <div class="system-info-box">
@@ -33,6 +33,44 @@
             <p class="system-info-value"><span id="soilMoisture">{{ soil_moisture | round }}</span></p>
         </div>
     </div>
+    
+    <!-- Display Active Profile Information -->
+    <div class="active-profile-info">
+        <h2 style="text-align:center">Active Profile</h2>
+        <p>Name: <strong>{{ active_profile.name if active_profile else 'None selected' }}</strong></p>
+        <p>Current Soil Moisture Threshold: <strong>{{ active_profile.soil_moisture_threshold if active_profile else 'N/A' }}</strong></p>
+    </div>
+
+    
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <form action="/select_profile" method="post">
+            <label for="profile_selection">Select Profile:</label>
+            <select name="profile_id" id="profile_selection">
+                {% for profile in profiles %}
+                    <option value="{{ profile['id'] }}" {% if profile['is_active'] == 1 %} selected {% endif %}>
+                        {{ profile['name'] }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Set Active Profile</button>
+        </form>
+    </div>
+    
+    
+    
+    <br>
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <form action="/update_profile" method="post">
+            <label for="profile_name">Profile Name:</label>
+            <input type="text" id="profile_name" name="profile_name" required>
+            <label for="soil_moisture_threshold">Soil Moisture Threshold:</label>
+            <input type="number" id="soil_moisture_threshold" name="soil_moisture_threshold" required>
+            <button type="submit">Save Profile</button>
+        </form>
+    </div>
+    
+    
+    
     <h2 style="text-align:center">Pump History (only top 5 latest entries)</h2>
     <table>
         <thead>
