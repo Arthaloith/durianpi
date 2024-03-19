@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css" type="text/css" />
+    <title>Soil Moisture Status</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="static/scripts.js"></script>
+</head>
+<body>
+    <h1>Soil Moisture Status</h1>
+    <p>Latest Pump Run: {{ latest_pump_run.timestamp }} ({{ latest_pump_run.duration }})</p>
+
+    <div class="system-info">
+        <div class="system-info-box">
+            <p class="system-info-label">RAM Usage</p>
+            <p class="system-info-value">{{ ram_usage }}%</p>
+        </div>
+        
+        <div class="system-info-box">
+            <p class="system-info-label">CPU Usage</p>
+            <p class="system-info-value">{{ cpu_usage }}%</p>
+        </div>
+        
+        <div class="system-info-box">
+            <p class="system-info-label">CPU Temperature</p>
+            <p class="system-info-value">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} Celcius{% else %}N/A{% endif %}</p>
+        </div>
+    </div>
+    <h2 style="text-align:center">Pump History (only top 5 latest entries)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Timestamp</th>
+                <th>Event</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pump_run in pump_history %}
+            <tr>
+                <td>{{ pump_run.id }}</td>
+                <td>{{ pump_run.timestamp }}</td>
+                <td>{{ pump_run.event }}</td>
+                <td>{{ pump_run.duration }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <form action="/force_water" method="post">
+        <button type="submit">Force Watering</button>
+    </form>
+
+    <form action="/skip_water" method="post">
+        <button type="submit">Skip Watering</button>
+    </form>
+
+    <form action="/poll" method="post">
+        <button type="submit">Force Polling</button>
+    </form>
+
+    <form action="/history" method="post">
+        <button type="submit">Show full history</button>
+    </form>
+
+    <form action="/clear" method="post">
+        <button type="submit" class="clear-history-button">Clear history</button>
+    </form>
+</body>
+</html>
