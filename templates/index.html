@@ -10,7 +10,8 @@
 </head>
 <body>
     <h1>Soil Moisture Status</h1>
-    <p>Latest Pump Run: {{ latest_pump_run.timestamp }} ({{ latest_pump_run.duration }})</p>
+    <p>Latest Pump Run: {{ latest_pump_run.timestamp }} (duration: {{ latest_pump_run.duration }})</p>
+    <p>Soil Moisture: {{ soil_moisture }}</p>
 
     <div class="system-info">
         <div class="system-info-box">

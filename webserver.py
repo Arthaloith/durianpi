@@ -3,7 +3,7 @@ import db
 import os
 import pumpcontrol
 import psutil
-
+import consts
 app = Flask(__name__)
 
 @app.route('/')
@@ -23,24 +23,21 @@ def index():
     cpu_temp = psutil.sensors_temperatures().get('cpu_thermal', [None])[0]
     
     # Render the template with the data
-    return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp)
+    return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp)
 
 @app.route('/force_water', methods=['POST'])
 def force_water():
-    # Run the pump
-    os.popen("python3 pumpcontrol.py runnow &")
-    
-    # Redirect back to the homepage after running the pump
+    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py runnow")
     return render_template('force_water.html')
 
 @app.route('/skip_water', methods=['POST'])
 def skip_water():
-    os.popen("python3 pumpcontrol.py skip &")
+    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py skip &")
     return render_template('skip_water.html')
 
 @app.route('/poll', methods=['POST'])
 def poll():
-    os.popen("python3 pumpcontrol.py &")
+    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py &")
     return render_template('poll.html')
 
 @app.route('/history', methods=['POST'])
