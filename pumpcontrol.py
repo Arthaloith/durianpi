@@ -33,6 +33,7 @@ def poll():
     if lastLog is not None:
         lastTimestamp = datetime.strptime(lastLog['timestamp'], '%Y-%m-%d %H:%M:%S')
         interval = (datetime.now() - lastTimestamp).total_seconds()
+        print(interval)
     else:
         interval = PUMP_RUN_INTERVAL + 1
 

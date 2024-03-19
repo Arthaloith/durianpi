@@ -1,27 +1,21 @@
 $(document).ready(function() {
-    function updateSystemInfo() {
-        $.ajax({
-            url: '/', // Replace with the endpoint to fetch the system information
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                // Update RAM usage
-                $('#ram-usage').text(data.ram_usage + '%');
-                
-                // Update CPU usage
-                $('#cpu-usage').text(data.cpu_usage + '%');
-                
-                // Update CPU temperature
-                if (data.cpu_temp !== 'N/A') {
-                    $('#cpu-temp').text(data.cpu_temp.current + ' Celcius');
-                } else {
-                    $('#cpu-temp').text('N/A');
-                }
-            }
-        });
+    // Function to update the dynamic values
+    function updateValues() {
+      $.ajax({
+        url: '/get_values',
+        type: 'GET',
+        success: function(data) {
+          $('#soilMoisture').text(data.soil_moisture);
+          $('#ramUsage').text(data.ram_usage);
+          $('#cpuUsage').text(data.cpu_usage);
+          $('#cpuTemp').text(data.cpu_temp);
+        }
+      });
     }
-    
-    // Update system info initially and then every 5 seconds
-    updateSystemInfo();
-    setInterval(updateSystemInfo, 5000);
-});
+  
+    // Update values initially
+    updateValues();
+  
+    // Periodically update values every 5 seconds
+    setInterval(updateValues, 1000);
+  });

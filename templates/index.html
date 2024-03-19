@@ -6,27 +6,31 @@
     <link rel="stylesheet" href="static/styles.css" type="text/css" />
     <title>Soil Moisture Status</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="static/scripts.js"></script>
+    <script src="../static/scripts.js"></script>
 </head>
 <body>
     <h1>Soil Moisture Status</h1>
     <p>Latest Pump Run: {{ latest_pump_run.timestamp }} (duration: {{ latest_pump_run.duration }})</p>
-    <p>Soil Moisture: {{ soil_moisture }}</p>
-
+    <h2 style="text-align:center">System Information</h2>
     <div class="system-info">
         <div class="system-info-box">
             <p class="system-info-label">RAM Usage</p>
-            <p class="system-info-value">{{ ram_usage }}%</p>
+            <p class="system-info-value"><span id="ramUsage">{{ ram_usage }}</span>%</p>
         </div>
         
         <div class="system-info-box">
             <p class="system-info-label">CPU Usage</p>
-            <p class="system-info-value">{{ cpu_usage }}%</p>
+            <p class="system-info-value"><span id="cpuUsage">{{ cpu_usage }}</span>%</p>
         </div>
         
         <div class="system-info-box">
-            <p class="system-info-label">CPU Temperature</p>
-            <p class="system-info-value">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} Celcius{% else %}N/A{% endif %}</p>
+            <p class="system-info-label">CPU Temp</p>
+            <p class="system-info-value"><span id="cpuTemp">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} {% else %}N/A{% endif %}</span></p>
+        </div>
+    
+        <div class="system-info-box">
+            <p class="system-info-label">Soil Moisture</p>
+            <p class="system-info-value"><span id="soilMoisture">{{ soil_moisture | round }}</span></p>
         </div>
     </div>
     <h2 style="text-align:center">Pump History (only top 5 latest entries)</h2>
