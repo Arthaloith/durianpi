@@ -35,7 +35,7 @@
     </style>
 </head>
 <body>
-    <h1>Soil Moisture Status</h1>
+    <h1>Dashboard</h1>
     <p>Latest Pump Run: {{ latest_pump_run.timestamp }} (duration: {{ latest_pump_run.duration }})</p>
     <h2 style="text-align:center">System Information</h2>
     <div class="system-info">
@@ -109,6 +109,7 @@
     
     
     <br>
+    <h2 style="text-align:center">Add Profiles</h2>
     <div style="display: flex; justify-content: center; align-items: center;">
         <form action="/update_profile" method="post">
             <label for="profile_name">Profile Name:</label>

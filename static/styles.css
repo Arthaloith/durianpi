@@ -114,4 +114,14 @@ tr:nth-child(even) {background-color: #f2f2f2;}
     margin: 0 10px; /* Adjust spacing between buttons */
 }
 
+.center-link {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
 
+.center-link button {
+    background-color: #4CAF50;
+    text-decoration: none;
+    color: white;
+}

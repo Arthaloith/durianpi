@@ -88,7 +88,7 @@ def activateChecknPump():
         soil_moisture_threshold = profile['soil_moisture_threshold']
     
     soil_value = get_soil_moisture()
-    if soil_value > soil_moisture_threshold:
+    if soil_value < soil_moisture_threshold:
         runPump()
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
