@@ -24,12 +24,6 @@ def create_tables():
                             timestamp TEXT NOT NULL,
                             event TEXT NOT NULL,
                             duration TEXT NOT NULL)''')
-        # Create service log table
-        cursor.execute('''CREATE TABLE IF NOT EXISTS service_log (
-                            id INTEGER PRIMARY KEY,
-                            timestamp TEXT NOT NULL,
-                            event TEXT NOT NULL,
-                            duration TEXT NOT NULL)''')
         conn.commit()
     except sqlite3.Error as e:
         print(e)
