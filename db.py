@@ -185,3 +185,17 @@ def get_active_profile():
     if profile:
         return {'id': profile[0], 'name': profile[1], 'soil_moisture_threshold': profile[2]}
     return None
+
+def delete_profile(profile_id):
+    """Delete a profile from the database."""
+    sql = '''DELETE FROM profiles WHERE id = ?'''
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute(sql, (profile_id,))
+        conn.commit()
+    except sqlite3.Error as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()

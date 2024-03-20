@@ -1,90 +1,97 @@
-/* styles.css */
-
+/* General styles */
 body {
-font-family: Arial, sans-serif;
-background-color: #f2f2f2;
-margin: 0;
-padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
 }
 
-h1 {
-color: #333;
-text-align: center;
+h1, h2 {
+    color: #333;
+    text-align: center;
 }
 
 p {
-margin-bottom: 10px;
-text-align: center;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
-table {
-border-collapse: collapse;
-width: 100%;
-}
-
-th, td {
-padding: 10px;
-text-align: left;
-border-bottom: 1px solid #ddd;
-}
-
-th {
-background-color: #f2f2f2;
-}
-
+/* Button styles */
 button {
-background-color: #4CAF50;
-color: white;
-border: none;
-padding: 10px 20px;
-text-align: center;
-text-decoration: none;
-display: inline-block;
-font-size: 16px;
-margin-top: 10px;
-cursor: pointer;
-}
-
-.clear-history-button {
-    background-color: #ff0000;
-}
-
-.clear-history-button:hover {
-    background-color: #cc0000 ;
+    background-color: #008CBA; /* Lighter blue */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; /* Rounded corners */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; /* Smooth background transition */
 }
 
 button:hover {
-background-color: #45a049;
+    background-color: #005f73; /* Darker blue on hover */
 }
 
+.clear-history-button {
+    background-color: #f44336; /* Red */
+}
+
+.clear-history-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Form styles */
 form {
-    display: inline-block;
+    margin-top: 20px;
+    text-align: center; /* Center form content */
 }
 
+/* Table styles */
+table {
+    border-collapse: collapse;
+    width: 80%;
+    margin-left: auto; /* Center table */
+    margin-right: auto; /* Center table */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #e9eff1; /* Lighter header background */
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+/* System info styles */
 .system-info {
     display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    flex-wrap: wrap; /* Allows items to wrap as needed */
+    justify-content: center; /* Centers items horizontally */
+    gap: 10px; /* Controls the gap between items */
     margin-top: 20px;
 }
 
-.system-info h2 {
-    margin-bottom: 10px;
-}
-    
 .system-info-box {
-    background-color: #f2f2f2;
-    border-radius: 10px;
     padding: 15px;
-    margin: 10px;
-    text-align: center;
-    border: 2px solid #333;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 1 1 200px; /* Allows boxes to grow and shrink but start at 200px */
+    margin: 5px; /* Reduced margin */
 }
 
-.system-info-box {
-    background-color: #00FFFF; 
-    color: black;
+.system-info-box:hover {
+    transform: translateY(-5px); /* Slight lift effect on hover */
 }
 
 .system-info-label {
@@ -95,4 +102,16 @@ form {
 .system-info-value {
     font-size: 20px;
 }
+
+/* Button Group Styling */
+.button-group {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.button-group form {
+    display: inline-block; /* Display forms inline */
+    margin: 0 10px; /* Adjust spacing between buttons */
+}
+
 

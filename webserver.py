@@ -91,5 +91,10 @@ def select_profile():
     db.set_active_profile(profile_id)
     return redirect(url_for('index'))
 
+@app.route('/delete_profile/<int:profile_id>', methods=['POST'])
+def delete_profile(profile_id):
+    db.delete_profile(profile_id)
+    return redirect(url_for('index'))
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
