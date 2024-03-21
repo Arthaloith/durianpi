@@ -9,19 +9,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    profiles = db.get_all_profiles()
-    # Get the latest pump run event
     latest_pump_run = db.get_latest_pump_run()
-    # Get active profile
-    active_profile = db.get_active_profile()
     
-    # Get the pump history
     pump_history = db.get_pump_history_only_5()
     
-    # Get the soil moisture value from pumpcontrol
     soil_moisture = pumpcontrol.get_soil_moisture()
 
-    # Get system information
     ram_usage = psutil.virtual_memory().percent
     cpu_usage = psutil.cpu_percent()
     cpu_temp = psutil.sensors_temperatures().get('cpu_thermal', [None])[0]
@@ -31,7 +24,6 @@ def index():
 
 @app.route('/profiles')
 def profiles():
-    # Fetch the necessary data for profiles
     profiles = db.get_all_profiles()
     active_profile = db.get_active_profile()
     return render_template('profiles.html', profiles=profiles, active_profile=active_profile)
@@ -88,7 +80,7 @@ def clearHistory():
 def update_profile():
     name = request.form['profile_name']
     threshold = int(request.form['soil_moisture_threshold'])
-    db.add_or_update_profile(name, threshold)  # Ensure this matches the function name in db.py
+    db.add_or_update_profile(name, threshold)
     return redirect(url_for('profiles'))
 
 
