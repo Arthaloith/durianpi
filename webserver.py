@@ -27,7 +27,14 @@ def index():
     cpu_temp = psutil.sensors_temperatures().get('cpu_thermal', [None])[0]
     
     # Render the template with the data
-    return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp, profiles=profiles, active_profile=active_profile)
+    return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp)
+
+@app.route('/profiles')
+def profiles():
+    # Fetch the necessary data for profiles
+    profiles = db.get_all_profiles()
+    active_profile = db.get_active_profile()
+    return render_template('profiles.html', profiles=profiles, active_profile=active_profile)
 
 @app.route('/get_values', methods=['GET'])
 def get_values():
@@ -82,19 +89,19 @@ def update_profile():
     name = request.form['profile_name']
     threshold = int(request.form['soil_moisture_threshold'])
     db.add_or_update_profile(name, threshold)  # Ensure this matches the function name in db.py
-    return redirect(url_for('index'))
+    return redirect(url_for('profiles'))
 
 
 @app.route('/select_profile', methods=['POST'])
 def select_profile():
     profile_id = request.form['profile_id']
     db.set_active_profile(profile_id)
-    return redirect(url_for('index'))
+    return redirect(url_for('profiles'))
 
 @app.route('/delete_profile/<int:profile_id>', methods=['POST'])
 def delete_profile(profile_id):
     db.delete_profile(profile_id)
-    return redirect(url_for('index'))
+    return redirect(url_for('profiles'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

@@ -1,0 +1,18 @@
+.button-container {
+    text-align: center;
+    padding: 20px; /* Provides some space around the button */
+}
+
+.button {
+    display: inline-block; /* Allows text-align to affect it */
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #fff;
+    background-color: #008CBA;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #005f73;
+}

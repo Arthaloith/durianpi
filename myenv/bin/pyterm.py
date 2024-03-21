@@ -1,4 +1,4 @@
-#!/home/admin/Projects/durianpi/myenv/bin/python3
+#!/home/admin/Projects/durianpi/myenv/bin/python
 
 """Simple Python serial terminal
 """

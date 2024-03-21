@@ -1,4 +1,4 @@
-#!/home/admin/Projects/durianpi/myenv/bin/python3
+#!/home/admin/Projects/durianpi/myenv/bin/python
 # -*- coding: utf-8 -*-
 
 # Copyright (c) 2018-2022, Emmanuel Blot <emmanuel.blot@free.fr>

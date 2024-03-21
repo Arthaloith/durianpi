@@ -1,0 +1,144 @@
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+h1, h2 {
+    color: #333;
+    text-align: center;
+}
+
+p {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* Button styles */
+button {
+    background-color: #008CBA; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s; 
+}
+
+button:hover {
+    background-color: #005f73; 
+}
+
+.profile-button {
+    display: flex;
+    justify-content: center; /* Centers the content horizontally */
+    align-items: center; /* Centers the content vertically if needed */
+    width: 100%; /* Takes full width of its parent */
+    height: 100px; /* Example height, adjust as needed */
+}
+
+.profile-button button {
+    background-color: #008CBA;
+}
+.profile-button button:hover {
+    background-color: #005f73;
+}
+
+.clear-history-button {
+    background-color: #f44336; 
+}
+
+.clear-history-button:hover {
+    background-color: #d32f2f; 
+}
+
+
+
+/* Form styles */
+form {
+    margin-top: 20px;
+    text-align: center; /* Center form content */
+}
+
+/* Table styles */
+table {
+    border-collapse: collapse;
+    width: 80%;
+    margin-left: auto; /* Center table */
+    margin-right: auto; /* Center table */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #e9eff1; /* Lighter header background */
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+/* System info styles */
+.system-info {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap as needed */
+    justify-content: center; /* Centers items horizontally */
+    gap: 10px; /* Controls the gap between items */
+    margin-top: 20px;
+}
+
+.system-info-box {
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    flex: 1 1 200px; /* Allows boxes to grow and shrink but start at 200px */
+    margin: 5px; /* Reduced margin */
+}
+
+.system-info-box:hover {
+    transform: translateY(-5px); /* Slight lift effect on hover */
+}
+
+.system-info-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.system-info-value {
+    font-size: 20px;
+}
+
+/* Button Group Styling */
+.button-group {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.button-group form {
+    display: inline-block; /* Display forms inline */
+    margin: 0 10px; /* Adjust spacing between buttons */
+}
+
+.center-link {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.center-link button {
+    background-color: #008CBA;
+    text-decoration: none;
+    color: white;
+}
