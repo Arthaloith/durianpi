@@ -12,7 +12,7 @@ import numpy as np
 app = Flask(__name__)
 
 picam2 = Picamera2()
-picam2.start_preview(Preview.QTGL)
+# picam2.start_preview(Preview.QTGL)
 preview_config = picam2.create_preview_configuration()
 preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
 picam2.configure(preview_config)
@@ -120,6 +120,7 @@ def generate_camera_feed():
 @app.route('/camera')
 def camera_feed():
     return Response(generate_camera_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
