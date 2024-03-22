@@ -1,13 +1,24 @@
-from flask import Flask, Response, redirect, render_template, jsonify, request, url_for
+from flask import Flask, Response,redirect, render_template, jsonify, request, url_for
 import db
 import os
 import pumpcontrol
 import psutil
 import consts
 import math
+from picamera2 import Picamera2, Preview
 import cv2
-import response
+import numpy as np
+
 app = Flask(__name__)
+
+picam2 = Picamera2()
+picam2.start_preview(Preview.QTGL)
+preview_config = picam2.create_preview_configuration()
+preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
+picam2.configure(preview_config)
+picam2.start()
+
+
 
 @app.route('/')
 def index():
@@ -97,5 +108,18 @@ def delete_profile(profile_id):
     db.delete_profile(profile_id)
     return redirect(url_for('profiles'))
 
+def generate_camera_feed():
+    while True:
+        frame = picam2.capture_array()
+        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_YV12)
+        ret, buffer = cv2.imencode('.jpg', frame_bgr)
+        frame = buffer.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+        
+@app.route('/camera')
+def camera_feed():
+    return Response(generate_camera_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=False, host='0.0.0.0')
