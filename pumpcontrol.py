@@ -56,7 +56,7 @@ def runPump():
     pumpRelay.on()
     time.sleep(PUMP_DURATION)
     pumpRelay.off()
-    
+
     readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     duration_str = f'{consts.PUMP_DURATION} seconds'
 
@@ -110,7 +110,7 @@ def heartBeat():
 # Phase 1: small plant
 def phaseOne():
     soil_value = get_soil_moisture()
-    if 65 <= soil_value <= 80:
+    if soil_value < 70:
         pumpRelay.on()
         time.sleep(14)
         pumpRelay.off()
@@ -131,7 +131,7 @@ def phaseOne():
 # Phase 2: blooming plant
 def phaseTwo():
     soil_value = get_soil_moisture()
-    if 50 <= soil_value <= 60:
+    if soil_value < 60:
         pumpRelay.on()
         time.sleep(14)
         pumpRelay.off()
@@ -152,7 +152,7 @@ def phaseTwo():
 # Phase 3: fruiting plant
 def phaseThree():
     soil_value = get_soil_moisture()
-    if soil_value < 80:
+    if soil_value < 50:
         pumpRelay.on()
         time.sleep(14)
         pumpRelay.off()
@@ -183,7 +183,7 @@ if __name__ == "__main__":
             activateChecknPump()
         elif sys.argv[1] == 'skip':
             skipPump()
-        elif sys.argv[1] == 'dokkyun':
+        elif sys.argv[1] == 'bump':
             heartBeat()
         elif sys.argv[1] == 'p1':
             phaseOne()
