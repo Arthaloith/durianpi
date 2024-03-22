@@ -29,16 +29,19 @@ picam2.start()
 
 def generate_camera_feed():
     """
-    Generator function to capture camera frames and encode them as JPEG
-    images. This stream of images can be consumed by a client to display
-    a live video feed.
+    Generator function to capture camera frames, convert them from YUV420 to BGR,
+    and encode them as JPEG images. This stream of images can be consumed by a client
+    to display a live video feed.
     """
     while True:
         # Capture frame from the camera
         frame = picam2.capture_array()
         
+        # Convert YUV420 to BGR for color image
+        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_YV12)  # Adjust conversion flag as necessary
+        
         # Encode frame as JPEG
-        ret, buffer = cv2.imencode('.jpg', frame)
+        ret, buffer = cv2.imencode('.jpg', frame_bgr)
         frame = buffer.tobytes()
         
         # Yield the binary data for the frame, properly formatted for HTTP
