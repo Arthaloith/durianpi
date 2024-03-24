@@ -19,9 +19,9 @@ while True:
         audio = r.listen(source)
     try:
         # Recognize speech using Google's speech recognition service
-        words = r.recognize_google(audio)
+        words = r.recognize_google(audio, language="vi-VN")
         print(words)
-        if words.lower() == "activate":  # Check if the recognized word is "hello"
+        if words.lower() == "kích hoạt":  # Check if the recognized word is "hello"
             print("executing pumpcontrol.py...")
             subprocess.run(["python", "durianpi/pumpcontrol.py", "runnow"])  # Execute pumpcontrol.py
     except sr.UnknownValueError:
