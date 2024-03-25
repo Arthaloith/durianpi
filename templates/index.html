@@ -6,11 +6,7 @@
     <link rel="stylesheet" href="static/index.css" type="text/css" />
     <title>Soil Moisture Status</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        if (typeof jQuery == 'undefined') {
-            document.write(unescape("%3Cscript src='../static/jquery-3.7.1.min.js' type='text/javascript'%3E%3C/script%3E"));
-        }
-    </script>
+    
     <script src="../static/scripts.js"></script>
 
 </head>
@@ -74,6 +70,12 @@
         <form action="/history" method="post">
             <button type="submit">Show full history</button>
         </form>
+        <form action="/add_cronjob" method="post">
+            <button type="submit">Add Cronjob</button>
+        </form>
+        <form action="/clear_cronjob" method="post">
+            <button type="submit">Clear Cronjob</button>
+        </form>
         <form action="/clear" method="post">
             <button type="submit" class="clear-history-button">Clear history</button>
         </form>
@@ -85,6 +87,9 @@
         <a href="/camera" class="button">
             <button type="button">View Camera</button>
         </a>
+    </div>
+    <div class="button-group">
+        
     </div>
 </body>
 </html>

@@ -1,3 +1,8 @@
+#========================================================================================================#
+#                                                                                                        #
+#                                               LIBRARY IMPORTS                                          #
+#                                                                                                        #
+#========================================================================================================#
 from flask import Flask, Response,redirect, render_template, jsonify, request, url_for
 import db
 import os
@@ -8,6 +13,8 @@ import math
 from picamera2 import Picamera2, Preview
 import cv2
 import numpy as np
+import subprocess
+#========================================================================================================#
 
 app = Flask(__name__)
 
@@ -32,7 +39,6 @@ def index():
     cpu_usage = psutil.cpu_percent()
     cpu_temp = psutil.sensors_temperatures().get('cpu_thermal', [None])[0]
     
-    # Render the template with the data
     return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp)
 
 @app.route('/profiles')
@@ -121,6 +127,30 @@ def generate_camera_feed():
 def camera_feed():
     return Response(generate_camera_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-
+def add_cron_jobs():
+    script_path = "/home/admin/Projects/durianpi/cronjob.sh"  
+    try:
+        subprocess.run(["sh", script_path], check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error running cronjob script: {e}")
+        return False
+    
+@app.route('/add_cronjob', methods=['POST'])
+def handle_add_cron_jobs():
+    if add_cron_jobs():
+        return redirect(url_for('index'), code=302)  
+    else:
+        return "Failed to add cron jobs", 500
+    
+@app.route('/clear_cronjob', methods=['POST'])
+def clear_cronjob():
+    try:
+        subprocess.run("crontab -r", shell=True, check=True)
+        return redirect(url_for('index'), code=302)
+    except subprocess.CalledProcessError as e:
+        print(f"Error clearing cronjobs: {e}")
+        return "Failed to clear cronjobs", 500
+    
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
