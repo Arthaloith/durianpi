@@ -9,6 +9,8 @@ $(document).ready(function() {
           $('#ramUsage').text(data.ram_usage);
           $('#cpuUsage').text(data.cpu_usage);
           $('#cpuTemp').text(data.cpu_temp);
+          $('#temperature').text(data.temperature_c);
+          $('#humidity').text(data.humidity);
         }
       });
     }

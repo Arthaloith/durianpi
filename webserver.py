@@ -14,23 +14,32 @@ from picamera2 import Picamera2, Preview
 import cv2
 import numpy as np
 import subprocess
+import adafruit_dht
+import board
 #========================================================================================================#
-
+#========================================================================================================#
+#                                                                                                        #
+#                                          HARDWARE INITIALIZATIONS                                      #
+#                                                                                                        #
+#========================================================================================================#
 app = Flask(__name__)
-
+#camera module
 picam2 = Picamera2()
-# picam2.start_preview(Preview.QTGL)
 preview_config = picam2.create_preview_configuration()
 preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
 picam2.configure(preview_config)
 picam2.start()
-
-
-
+#DTH22 sensor
+dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
+#========================================================================================================#
+#========================================================================================================#
+#                                                                                                        #
+#                                             ROUTE DEFINITIONS                                          #
+#                                                                                                        #
+#========================================================================================================#
 @app.route('/')
 def index():
     latest_pump_run = db.get_latest_pump_run()
-    
     pump_history = db.get_pump_history_only_5()
     
     soil_moisture = pumpcontrol.get_soil_moisture()
@@ -39,7 +48,10 @@ def index():
     cpu_usage = psutil.cpu_percent()
     cpu_temp = psutil.sensors_temperatures().get('cpu_thermal', [None])[0]
     
-    return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp)
+    temperature_c = dhtDevice.temperature
+    humidity = dhtDevice.humidity
+    
+    return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp,temperature=temperature_c, humidity=humidity)
 
 @app.route('/profiles')
 def profiles():
@@ -56,6 +68,9 @@ def get_values():
     cpu_usage = psutil.cpu_percent()
     cpu_temp = psutil.sensors_temperatures().get('cpu_thermal', [None])[0]
     
+    temperature_c = dhtDevice.temperature
+    humidity = dhtDevice.humidity
+    
     if cpu_temp and cpu_temp.current != 'N/A':
         cpu_temp_current = int(float(cpu_temp.current))
     else:
@@ -65,7 +80,9 @@ def get_values():
         'soil_moisture': rounded_soil_moisture,
         'ram_usage': ram_usage,
         'cpu_usage': cpu_usage,
-        'cpu_temp': cpu_temp_current
+        'cpu_temp': cpu_temp_current,
+        'temperature': temperature_c,
+        'humidity': humidity
     }
 
 

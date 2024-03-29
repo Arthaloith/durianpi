@@ -34,6 +34,10 @@
             <p class="system-info-label">Soil Moisture</p>
             <p class="system-info-value"><span id="soilMoisture">{{ soil_moisture | round }}</span></p>
         </div>
+        <div class="system-info-box">
+            <p>Temperature: <span id="temperature">{{ temperature }}</span>C</p>
+            <p>Humidity: <span id="humidity">{{ humidity }}</span>%</p>
+        </div>
     </div>
     <h2 style="text-align:center">Pump History (only top 5 latest entries)</h2>
     <table>
