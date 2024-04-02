@@ -116,17 +116,11 @@ def phaseOne():
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        duration_str = '14 seconds'
-
-        entry = (readable_timestamp, 'Pump Run', duration_str)
-        
+        entry = (readable_timestamp, 'Pump Run', '14 seconds')
         db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        duration_str = 'N/A'
-
-        entry = (readable_timestamp, 'Pump Run (failed, too wet)', duration_str)
-        
+        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
         db.log_pump_run(entry)
 # Phase 2: blooming plant
 def phaseTwo():
@@ -137,17 +131,11 @@ def phaseTwo():
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        duration_str = 'N/A'
-
-        entry = (readable_timestamp, 'Pump Run', duration_str)
-        
+        entry = (readable_timestamp, 'Pump Run', '14 seconds')
         db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        duration_str = f'{consts.PUMP_DURATION} seconds'
-
-        entry = (readable_timestamp, 'Pump Run (failed, too wet)', duration_str)
-        
+        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
         db.log_pump_run(entry)
 # Phase 3: fruiting plant
 def phaseThree():
@@ -158,17 +146,12 @@ def phaseThree():
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        duration_str = 'N/A'
-
-        entry = (readable_timestamp, 'Pump Run', duration_str)
+        entry = (readable_timestamp, 'Pump Run', '14 seconds')
         
         db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        duration_str = f'{consts.PUMP_DURATION} seconds'
-
-        entry = (readable_timestamp, 'Pump Run (failed, too wet)', duration_str)
-        
+        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
         db.log_pump_run(entry)
         
 if __name__ == "__main__":
