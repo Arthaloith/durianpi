@@ -24,11 +24,11 @@ import board
 #========================================================================================================#
 app = Flask(__name__)
 #camera module
-picam2 = Picamera2()
-preview_config = picam2.create_preview_configuration()
-preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
-picam2.configure(preview_config)
-picam2.start()
+# picam2 = Picamera2()
+# preview_config = picam2.create_preview_configuration()
+# preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
+# picam2.configure(preview_config)
+# picam2.start()
 #DTH22 sensor
 dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
 #========================================================================================================#
@@ -144,7 +144,24 @@ def generate_camera_feed():
 def camera_feed():
     return Response(generate_camera_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-def add_cron_jobs():
+def add_cron_job(cron_job):
+    try:
+        # Capture the current user's crontab into a temporary file
+        subprocess.run(['crontab', '-l'], capture_output=True, text=True)
+        crontab_output = subprocess.run(['crontab', '-l'], capture_output=True, text=True).stdout
+
+        # Append the new cron job to the captured crontab output
+        new_crontab = crontab_output.strip() + '\n' + cron_job + '\n'
+
+        # Load the modified crontab from the temporary file
+        subprocess.run(['crontab'], input=new_crontab, text=True)
+
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error adding cron job: {e}")
+        return False
+    
+def add_predefined_cron_jobs():
     script_path = "/home/admin/Projects/durianpi/cronjob.sh"  
     try:
         subprocess.run(["sh", script_path], check=True)
@@ -152,13 +169,28 @@ def add_cron_jobs():
     except subprocess.CalledProcessError as e:
         print(f"Error running cronjob script: {e}")
         return False
-    
-@app.route('/add_cronjob', methods=['POST'])
-def handle_add_cron_jobs():
-    if add_cron_jobs():
+
+@app.route('/add_predefined_cronjob', methods=['POST'])
+def handle_add_predefined_cron_jobs():
+    if add_predefined_cron_jobs():
         return redirect(url_for('index'), code=302)  
     else:
         return "Failed to add cron jobs", 500
+
+@app.route('/add_cronjob', methods=['POST'])
+def handle_add_cron_jobs():
+    minute = request.form['minute']
+    hour = request.form['hour']
+    day_month = request.form['day_month']
+    month = request.form['month']
+    day_week = request.form['day_week']
+    command = request.form['command']
+
+    cron_job = f"{minute} {hour} {day_month} {month} {day_week} {command}"
+    if add_cron_job(cron_job):
+        return redirect(url_for('index'), code=302)
+    else:
+        return "Failed to add cron job", 500
     
 @app.route('/clear_cronjob', methods=['POST'])
 def clear_cronjob():
@@ -168,6 +200,11 @@ def clear_cronjob():
     except subprocess.CalledProcessError as e:
         print(f"Error clearing cronjobs: {e}")
         return "Failed to clear cronjobs", 500
-    
+
+@app.route('/cron')
+def cron_job_page():
+    available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &']
+    return render_template('cron.html', available_commands=available_commands)
+
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')

@@ -39,7 +39,7 @@
             <p>Humidity: <span id="humidity">{{ humidity }}</span>%</p>
         </div>
     </div>
-    <h2 style="text-align:center">Pump History (only top 5 latest entries)</h2>
+    <h2 style="text-align:center">Pump History (Top 5 Latest)</h2>
     <table>
         <thead>
             <tr>
@@ -72,28 +72,22 @@
             <button type="submit">Force Polling</button>
         </form>
         <form action="/history" method="post">
-            <button type="submit">Show full history</button>
-        </form>
-        <form action="/add_cronjob" method="post">
-            <button type="submit">Add Cronjob</button>
-        </form>
-        <form action="/clear_cronjob" method="post">
-            <button type="submit">Clear Cronjob</button>
+            <button type="submit">Show Full History</button>
         </form>
         <form action="/clear" method="post">
-            <button type="submit" class="clear-history-button">Clear history</button>
+            <button type="submit" class="clear-history-button">Clear History</button>
         </form>
     </div>
     <div class="profile-button">
         <a href="/profiles" class="button">
             <button type="submit" class="clear-history-button">Manage Profile</button>
         </a>
+        <a href="/cron" class="button">
+            <button type="submit" class="clear-history-button">Manage Cronjob</button>
+        </a>
         <a href="/camera" class="button">
             <button type="button">View Camera</button>
         </a>
-    </div>
-    <div class="button-group">
-        
     </div>
 </body>
 </html>

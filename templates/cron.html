@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cron Job Management</title>
+    <link rel="stylesheet" type="text/css" href="static/cron.css">
+    
+</head>
+<body>
+    <h1>Cron Job Management</h1>
+    <h2>Add Cron Job</h2>
+    <form action="/add_cronjob" method="post">
+        <label for="minute">Minute:</label>
+        <input type="text" id="minute" name="minute" >
+
+        <label for="hour">Hour:</label>
+        <input type="text" id="hour" name="hour" >
+
+        <label for="day_month">Day (Month):</label>
+        <input type="text" id="day_month" name="day_month" >
+
+        <label for="month">Month:</label>
+        <input type="text" id="month" name="month" >
+
+        <label for="day_week">Day (Week):</label>
+        <input type="text" id="day_week" name="day_week" >
+
+        <label for="command">Command:</label>
+        <select id="command" name="command" >
+            {% for command in available_commands %}
+            <option value="{{ command }}">{{ command }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Add Cron Job</button>
+    </form>
+    
+    <div class="container">
+        <form action="/add_predefined_cronjob" method="post">
+            <button type="submit">Add Preconfigured Cronjob</button>
+        </form>
+        <form action="/clear_cronjob" method="post">
+            <button type="submit">Clear Cronjob</button>
+        </form>
+    </div>
+
+
+    <a class="center-link" href="/">
+        <button>Back to dashboard</button>
+    </a>
+</body>
+</html>
