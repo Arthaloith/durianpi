@@ -85,7 +85,7 @@ def get_values():
         'humidity': humidity
     }
 
-
+#==============================================PUMP CONTROL================================================#
 
 @app.route('/force_water', methods=['POST'])
 def force_water():
@@ -101,7 +101,7 @@ def skip_water():
 def poll():
     os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py &")
     return render_template('poll.html')
-
+#==============================================PUMP HISTORY================================================#
 @app.route('/history', methods=['POST'])
 def history():
     pump_history = db.get_pump_history()
@@ -111,7 +111,7 @@ def history():
 def clearHistory():
     pump_history = db.clear_pump_history()
     return render_template('clear.html', pump_history=pump_history)
-
+#=============================================PROFILE MANAGEMENT============================================#
 @app.route('/update_profile', methods=['POST'])
 def update_profile():
     name = request.form['profile_name']
@@ -131,6 +131,7 @@ def delete_profile(profile_id):
     db.delete_profile(profile_id)
     return redirect(url_for('profiles'))
 
+#==============================================CAMERA FUNCTIONS===============================================#
 def generate_camera_feed():
     while True:
         frame = picam2.capture_array()
@@ -143,7 +144,7 @@ def generate_camera_feed():
 @app.route('/camera')
 def camera_feed():
     return Response(generate_camera_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
+#==============================================CRON MANAGEMENT================================================#
 def add_cron_job(cron_job):
     try:
         # Capture the current user's crontab into a temporary file
@@ -205,6 +206,6 @@ def clear_cronjob():
 def cron_job_page():
     available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &']
     return render_template('cron.html', available_commands=available_commands)
-
+#========================================================================================================#
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')

@@ -76,10 +76,6 @@ def get_soil_moisture():
     moisture_percentage = 100 - math.ceil((soil_value / 1024) * 100)
     return moisture_percentage
 
-def test():
-    print( get_soil_moisture())
-
-
 def activateChecknPump():
     profile = db.get_active_profile()
     if not profile:
@@ -120,7 +116,7 @@ def phaseOne():
         db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
+        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')   
         db.log_pump_run(entry)
 # Phase 2: blooming plant
 def phaseTwo():
@@ -153,7 +149,7 @@ def phaseThree():
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
         db.log_pump_run(entry)
-        
+#========================================================================================================#        
 if __name__ == "__main__":
     if len(sys.argv) == 2:
         if sys.argv[1] == 'runnow':
