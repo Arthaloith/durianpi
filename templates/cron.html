@@ -7,8 +7,9 @@
 </head>
 <body>
     <h1>Cron Job Management</h1>
-    <h2>Add Cron Job</h2>
+
     <form action="/add_cronjob" method="post">
+        <h2>Add Cron Job</h2>
         <label for="minute">Minute:</label>
         <input type="text" id="minute" name="minute" >
 
@@ -33,7 +34,12 @@
 
         <button type="submit">Add Cron Job</button>
     </form>
-    
+
+    <div class="cronjob-container">
+        <h2>Cron Jobs:</h2>
+        <pre>{{ '\n'.join(cron_jobs.splitlines()) or 'No cron jobs found' }}</pre>
+    </div>
+
     <div class="container">
         <form action="/add_predefined_cronjob" method="post">
             <button type="submit">Add Preconfigured Cronjob</button>

@@ -75,7 +75,7 @@ def get_soil_moisture():
     soil_value = chan.value / 64
     moisture_percentage = 100 - math.ceil((soil_value / 1024) * 100)
     return moisture_percentage
-
+    
 def activateChecknPump():
     profile = db.get_active_profile()
     if not profile:
@@ -160,6 +160,8 @@ if __name__ == "__main__":
             db.create_tables_profile()
         elif sys.argv[1] == 'check':
             activateChecknPump()
+        elif sys.argv[1] == 'moist':
+            get_soil_moisture()
         elif sys.argv[1] == 'skip':
             skipPump()
         elif sys.argv[1] == 'bump':

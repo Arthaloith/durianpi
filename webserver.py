@@ -24,11 +24,11 @@ import board
 #========================================================================================================#
 app = Flask(__name__)
 #camera module
-# picam2 = Picamera2()
-# preview_config = picam2.create_preview_configuration()
-# preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
-# picam2.configure(preview_config)
-# picam2.start()
+picam2 = Picamera2()
+preview_config = picam2.create_preview_configuration()
+preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
+picam2.configure(preview_config)
+picam2.start()
 #DTH22 sensor
 dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
 #========================================================================================================#
@@ -174,7 +174,7 @@ def add_predefined_cron_jobs():
 @app.route('/add_predefined_cronjob', methods=['POST'])
 def handle_add_predefined_cron_jobs():
     if add_predefined_cron_jobs():
-        return redirect(url_for('index'), code=302)  
+        return redirect(url_for('cron_job_page'), code=302)  
     else:
         return "Failed to add cron jobs", 500
 
@@ -189,7 +189,7 @@ def handle_add_cron_jobs():
 
     cron_job = f"{minute} {hour} {day_month} {month} {day_week} {command}"
     if add_cron_job(cron_job):
-        return redirect(url_for('index'), code=302)
+        return redirect(url_for('cron_job_page'), code=302)
     else:
         return "Failed to add cron job", 500
     
@@ -197,15 +197,25 @@ def handle_add_cron_jobs():
 def clear_cronjob():
     try:
         subprocess.run("crontab -r", shell=True, check=True)
-        return redirect(url_for('index'), code=302)
+        return redirect(url_for('cron_job_page'), code=302)
     except subprocess.CalledProcessError as e:
         print(f"Error clearing cronjobs: {e}")
         return "Failed to clear cronjobs", 500
-
+    
+def get_cron_jobs():
+    try:
+        result = subprocess.run(['crontab', '-l'], capture_output=True, text=True)
+        cron_jobs = result.stdout.strip()
+        return cron_jobs
+    except subprocess.CalledProcessError as e:
+        print(f"Error retrieving cron jobs: {e}")
+        return None
+    
 @app.route('/cron')
 def cron_job_page():
+    cron_jobs = get_cron_jobs()
     available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &']
-    return render_template('cron.html', available_commands=available_commands)
+    return render_template('cron.html', available_commands=available_commands,cron_jobs=cron_jobs)
 #========================================================================================================#
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
