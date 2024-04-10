@@ -18,7 +18,7 @@ while True:
     try:
         words = r.recognize_google(audio, language='vi-VN')
         print(words)
-        if words.lower() == "activate":
+        if words.lower() == "tưới cây":
             print("executing pumpcontrol.py...")
             subprocess.run(["python", "durianpi/pumpcontrol.py", "runnow"])
     except sr.UnknownValueError:
