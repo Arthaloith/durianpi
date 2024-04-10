@@ -185,9 +185,10 @@ def handle_add_cron_jobs():
     day_month = request.form['day_month']
     month = request.form['month']
     day_week = request.form['day_week']
+    custom_command = request.form['custom_command']
     command = request.form['command']
 
-    cron_job = f"{minute} {hour} {day_month} {month} {day_week} {command}"
+    cron_job = f"{minute} {hour} {day_month} {month} {day_week} {custom_command} {command}"
     if add_cron_job(cron_job):
         return redirect(url_for('cron_job_page'), code=302)
     else:
@@ -214,8 +215,18 @@ def get_cron_jobs():
 @app.route('/cron')
 def cron_job_page():
     cron_jobs = get_cron_jobs()
-    available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &']
+    available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &', '']
     return render_template('cron.html', available_commands=available_commands,cron_jobs=cron_jobs)
-#========================================================================================================#
+#==============================================SYSTEM CONTROL================================================#
+@app.route('/shutdown', methods=['POST'])
+def shutdown():
+    os.system('sudo shutdown now')
+    return 'Shutting down...'
+
+@app.route('/reboot', methods=['POST'])
+def reboot():
+    os.system('sudo reboot')
+    return 'Rebooting...'
+#============================================================================================================#
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')

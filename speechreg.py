@@ -2,6 +2,7 @@ import os
 import sys
 import speech_recognition as sr
 import subprocess 
+import sounddevice
 
 r = sr.Recognizer()
 
@@ -15,8 +16,7 @@ while True:
         print("Listening...")
         audio = r.listen(source)
     try:
-
-        words = r.recognize_google(audio)
+        words = r.recognize_google(audio, language='vi-VN')
         print(words)
         if words.lower() == "activate":
             print("executing pumpcontrol.py...")
