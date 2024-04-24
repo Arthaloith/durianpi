@@ -10,15 +10,15 @@ mic = sr.Microphone(device_index=1)
 
 while True:
     with mic as source:
-        r.adjust_for_ambient_noise(source, duration=1)
+        r.adjust_for_ambient_noise(source, duration=0.5)
         print("Listening...")
         audio = r.listen(source)
     try:
         words = r.recognize_google(audio)
         print(words)
-        if words.lower() == "activate":
+        if words.lower() == "hello":
             print("executing pumpcontrol.py...")
-            subprocess.run(["python", "/pumpcontrol.py", "runnow"])
+            subprocess.run(["python", "/home/admin/Projects/durianpi/pumpcontrol.py", "runnow"])
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
     except sr.RequestError as e:
