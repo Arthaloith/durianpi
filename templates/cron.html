@@ -3,60 +3,72 @@
 <head>
     <title>Cron Job Management</title>
     <link rel="stylesheet" type="text/css" href="static/cron.css">
-    
+    <link rel="stylesheet" href="static/sidebar.css" type="text/css"/>
+    <script src="../static/sysops.js"></script>
 </head>
 <body>
-    <h1>Cron Job Management</h1>
-
-    <form action="/add_cronjob" method="post">
-        <h2>Add Cron Job</h2>
-        <p>Visit <a href="https://crontab.cronhub.io/">this</a> page for more info on how cron works:</p>
-        
-        <label for="minute">Minute:</label>
-        <input type="text" id="minute" name="minute" >
-
-        <label for="hour">Hour:</label>
-        <input type="text" id="hour" name="hour" >
-
-        <label for="day_month">Day (Month):</label>
-        <input type="text" id="day_month" name="day_month" >
-
-        <label for="month">Month:</label>
-        <input type="text" id="month" name="month" >
-
-        <label for="day_week">Day (Week):</label>
-        <input type="text" id="day_week" name="day_week" >
-
-        <label for="custom_command">Custom command:</label>
-        <input type="text" id="custom_command" name="custom_command" >
-
-        <label for="command">Command:</label>
-        <select id="command" name="command" >
-            {% for command in available_commands %}
-            <option value="{{ command }}">{{ command }}</option>
-            {% endfor %}
-        </select>
-
-        <button type="submit">Add Cron Job</button>
-    </form>
-
-    <div class="cronjob-container">
-        <h2>Cron Jobs:</h2>
-        <pre>{{ '\n'.join(cron_jobs.splitlines()) or 'No cron jobs found' }}</pre>
+    <div class="sidenav">
+        <h1 style="text-align: left; padding: 14px;">Menu</h1>
+        <div class="sidebar-links">
+            <a href="/">Dashboard</a>
+            <a href="/camera">View Camera</a>
+            <a href="/profiles" type="submit">Manage Profile</a>
+            <a href="/cron" type="submit">Manage Cronjob</a>
+            <!-- Add more buttons here -->
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/shutdown" onclick="sendPostRequest(event, '/shutdown')">Shutdown</a>
+            <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Reboot</a>
+        </div>
     </div>
 
-    <div class="container">
-        <form action="/add_predefined_cronjob" method="post">
-            <button type="submit">Add Preconfigured Cronjob</button>
+    <div class="main">
+        <h1>Cron Job Management</h1>
+        <form action="/add_cronjob" method="post">
+            <h2>Add Cron Job</h2>
+            <p>Visit <a href="https://crontab.cronhub.io/">this</a> page for more info on how cron works:</p>
+            
+            <label for="minute">Minute:</label>
+            <input type="text" id="minute" name="minute" >
+
+            <label for="hour">Hour:</label>
+            <input type="text" id="hour" name="hour" >
+
+            <label for="day_month">Day (Month):</label>
+            <input type="text" id="day_month" name="day_month" >
+
+            <label for="month">Month:</label>
+            <input type="text" id="month" name="month" >
+
+            <label for="day_week">Day (Week):</label>
+            <input type="text" id="day_week" name="day_week" >
+
+            <label for="custom_command">Custom command:</label>
+            <input type="text" id="custom_command" name="custom_command" >
+
+            <label for="command">Command:</label>
+            <select id="command" name="command" >
+                {% for command in available_commands %}
+                <option value="{{ command }}">{{ command }}</option>
+                {% endfor %}
+            </select>
+            <br>
+            <button type="submit">Add Cron Job</button>
         </form>
-        <form action="/clear_cronjob" method="post">
-            <button type="submit">Clear Cronjob</button>
-        </form>
+
+        <div class="cronjob-container">
+            <h2>Cron Jobs:</h2>
+            <pre>{{ '\n'.join(cron_jobs.splitlines()) or 'No cron jobs found' }}</pre>
+        </div>
+
+        <div class="container">
+            <form action="/add_predefined_cronjob" method="post">
+                <button type="submit">Add Preconfigured Cronjob</button>
+            </form>
+            <form action="/clear_cronjob" method="post">
+                <button type="submit">Clear Cronjob</button>
+            </form>
+        </div>
     </div>
-
-
-    <a class="center-link" href="/">
-        <button>Back to dashboard</button>
-    </a>
 </body>
 </html>

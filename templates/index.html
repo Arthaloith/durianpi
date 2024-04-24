@@ -3,101 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/index.css" type="text/css" />
+    <link rel="stylesheet" href="static/index.css" type="text/css"/>
+    <link rel="stylesheet" href="static/sidebar.css" type="text/css"/>
     <title>Soil Moisture Status</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../static/scripts.js"></script>
+    <script src="../static/sysops.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/speechkitt.min.js"></script>
-    
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <p>Latest Pump Run: {{ latest_pump_run.timestamp }} (duration: {{ latest_pump_run.duration }})</p>
-    <h2 style="text-align:center">System Information</h2>
-    <div class="system-info">
-        <div class="system-info-box">
-            <p class="system-info-label">RAM Usage</p>
-            <p class="system-info-value"><span id="ramUsage">{{ ram_usage }}</span>%</p>
+    <div class="sidenav">
+        <h1 style="text-align: left; padding: 14px;">Menu</h1>
+        <div class="sidebar-links">
+            <a href="/">Dashboard</a>
+            <a href="/camera">View Camera</a>
+            <a href="/profiles" type="submit">Manage Profile</a>
+            <a href="/cron" type="submit">Manage Cronjob</a>
+            <!-- Add more buttons here -->
         </div>
-        
-        <div class="system-info-box">
-            <p class="system-info-label">CPU Usage</p>
-            <p class="system-info-value"><span id="cpuUsage">{{ cpu_usage }}</span>%</p>
-        </div>
-        
-        <div class="system-info-box">
-            <p class="system-info-label">CPU Temp</p>
-            <p class="system-info-value"><span id="cpuTemp">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} {% else %}N/A{% endif %}</span></p>
-        </div>
-    
-        <div class="system-info-box">
-            <p class="system-info-label">Soil Moisture</p>
-            <p class="system-info-value"><span id="soilMoisture">{{ soil_moisture | round }}</span></p>
-        </div>
-        <div class="system-info-box">
-            <p>Temperature: <span id="temperature">{{ temperature }}</span>C</p>
-            <p>Humidity: <span id="humidity">{{ humidity }}</span>%</p>
+        <div class="sidebar-bottom">
+            <a href="/shutdown" onclick="sendPostRequest(event, '/shutdown')">Shutdown</a>
+            <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Reboot</a>
         </div>
     </div>
-    <h2 style="text-align:center">Pump History (Top 5 Latest)</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Timestamp</th>
-                <th>Event</th>
-                <th>Duration</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for pump_run in pump_history %}
-            <tr>
-                <td>{{ pump_run.id }}</td>
-                <td>{{ pump_run.timestamp }}</td>
-                <td>{{ pump_run.event }}</td>
-                <td>{{ pump_run.duration }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    
-    <div class="button-group">
-        <form action="/force_water" method="post">
-            <button type="submit">Force Watering</button>
-        </form>
-        <form action="/skip_water" method="post">
-            <button type="submit">Skip Watering</button>
-        </form>
-        <form action="/poll" method="post">
-            <button type="submit">Force Polling</button>
-        </form>
-        <form action="/history" method="post">
-            <button type="submit">Show Full History</button>
-        </form>
-        <form action="/clear" method="post">
-            <button type="submit" class="clear-history-button">Clear History</button>
-        </form>
-    </div>
-    <div class="profile-button">
-        <a href="/profiles" class="button">
-            <button type="submit" class="clear-history-button">Manage Profile</button>
-        </a>
-        <a href="/cron" class="button">
-            <button type="submit" class="clear-history-button">Manage Cronjob</button>
-        </a>
-        <a href="/camera" class="button">
-            <button type="button">View Camera</button>
-        </a>
-    </div>
-    <div class="system-ops">
-        <form action="/shutdown" method="POST">
-          <button type="submit">Shutdown</button>
-        </form>
+
+    <div class="main">
+        <h1>Dashboard</h1>
+        <p>Latest Pump Run: {{ latest_pump_run.timestamp }} (duration: {{ latest_pump_run.duration }})</p>
+        <h2 style="text-align:center">System Information</h2>
+        <div class="system-info">
+            <div class="system-info-box">
+                <p class="system-info-label">RAM Usage</p>
+                <p class="system-info-value"><span id="ramUsage">{{ ram_usage }}</span>%</p>
+            </div>
+            
+            <div class="system-info-box">
+                <p class="system-info-label">CPU Usage</p>
+                <p class="system-info-value"><span id="cpuUsage">{{ cpu_usage }}</span>%</p>
+            </div>
+            
+            <div class="system-info-box">
+                <p class="system-info-label">CPU Temp</p>
+                <p class="system-info-value"><span id="cpuTemp">{% if cpu_temp != 'N/A' %}{{ cpu_temp.current }} {% else %}N/A{% endif %}</span></p>
+            </div>
         
-        <form action="/reboot" method="POST">
-          <button type="submit">Reboot</button>
-        </form>
+            <div class="system-info-box">
+                <p class="system-info-label">Soil Moisture</p>
+                <p class="system-info-value"><span id="soilMoisture">{{ soil_moisture | round }}</span></p>
+            </div>
+            <div class="system-info-box">
+                <p>Temperature: <span id="temperature">{{ temperature }}</span>C</p>
+                <p>Humidity: <span id="humidity">{{ humidity }}</span>%</p>
+            </div>
+        </div>
+        <h2 style="text-align:center">Pump History (Top 5 Latest)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Timestamp</th>
+                    <th>Event</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pump_run in pump_history %}
+                <tr>
+                    <td>{{ pump_run.id }}</td>
+                    <td>{{ pump_run.timestamp }}</td>
+                    <td>{{ pump_run.event }}</td>
+                    <td>{{ pump_run.duration }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="button-group">
+            <form action="/force_water" method="post">
+                <button type="submit">Force Watering</button>
+            </form>
+            <form action="/skip_water" method="post">
+                <button type="submit">Skip Watering</button>
+            </form>
+            <form action="/poll" method="post">
+                <button type="submit">Force Polling</button>
+            </form>
+            <form action="/history" method="post">
+                <button type="submit">Show Full History</button>
+            </form>
+            <form action="/clear" method="post">
+                <button type="submit" class="clear-history-button">Clear History</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
