@@ -173,7 +173,7 @@ if __name__ == "__main__":
         elif sys.argv[1] == 'p3':
             phaseThree()
         else:
-            print("Invalid argument. Available options are 'runnow' or 'createdb'.")
+            print("Invalid argument")
     else:
         heartBeat()
         poll()
