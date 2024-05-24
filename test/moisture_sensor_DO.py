@@ -10,9 +10,9 @@ try:
     while True:
         # Read the soil moisture sensor
         if GPIO.input(4):
-            print("Soil is Dry")
-        else:
             print("Soil is Wet")
+        else:
+            print("Soil is Dry")
         time.sleep(1)  # Wait for 1 second before reading again
 
 except KeyboardInterrupt:
