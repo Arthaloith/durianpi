@@ -4,5 +4,5 @@ PUMP_DURATION = 10
 # PUMP_RUN_INTERVAL = 1800 #30 minutes
 # PUMP_RUN_INTERVAL = 3600 #60 minutes
 # PUMP_RUN_INTERVAL = 10 #10 seconds
-PUMP_RUN_INTERVAL = 59
+PUMP_RUN_INTERVAL = 1
 PYTHON_VENV_LOCATION = "/home/admin/Projects/durianpi/myenv/bin/python"
