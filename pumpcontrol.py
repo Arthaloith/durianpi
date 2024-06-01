@@ -37,7 +37,7 @@ mcp = MCP.MCP3008(spi, cs)
 # Set up analog input channel
 chan = AnalogIn(mcp, MCP.P0)
 #========================================================================================================#
-
+# Kinda depricated i guess? the system used to be simpler and this thing here will activate pump automatically by comparing last pump run with interval but it's not needed anymore because cron happened
 def poll():
     lastLog = db.get_latest_pump_run()
     interval = 0
@@ -52,13 +52,13 @@ def poll():
     if interval > PUMP_RUN_INTERVAL:
         activateChecknPump()
 
-def runPump():
+def runPump(duration):
     pumpRelay.on()
-    time.sleep(PUMP_DURATION)
+    time.sleep(duration)
     pumpRelay.off()
 
     readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    duration_str = f'{consts.PUMP_DURATION} seconds'
+    duration_str = f'{duration} seconds'
 
     entry = (readable_timestamp, 'Pump Run', duration_str)
     
@@ -99,18 +99,19 @@ def monitor_soil_moisture():
         counter_bs()
         print("Soil moisture reached 100 for the second time. Restarting monitoring...")
         time.sleep(5)  # Wait for 5 seconds before restarting
-
-        
+  
 def activateChecknPump():
     profile = db.get_active_profile()
     if not profile:
         soil_moisture_threshold = 50
+        pump_duration = 30 
     else:
         soil_moisture_threshold = profile['soil_moisture_threshold']
+        pump_duration = profile['pump_duration']
     
     soil_value = get_soil_moisture()
     if soil_value < soil_moisture_threshold:
-        runPump()
+        runPump(pump_duration)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         duration_str = 'N/A'
@@ -143,6 +144,7 @@ def phaseOne():
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')   
         db.log_pump_run(entry)
+        
 # Phase 2: blooming plant
 def phaseTwo():
     soil_value = get_soil_moisture()
@@ -158,6 +160,7 @@ def phaseTwo():
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
         db.log_pump_run(entry)
+        
 # Phase 3: fruiting plant
 def phaseThree():
     soil_value = get_soil_moisture()
@@ -185,20 +188,18 @@ if __name__ == "__main__":
             db.create_tables_profile()
         elif sys.argv[1] == 'check':
             activateChecknPump()
-        elif sys.argv[1] == 'moist':
-            print_soil_moisture()
         elif sys.argv[1] == 'skip':
             skipPump()
         elif sys.argv[1] == 'poll':
             poll()
-        elif sys.argv[1] == 'bandaid':
-            monitor_soil_moisture()
         elif sys.argv[1] == 'p1':
             phaseOne()
         elif sys.argv[1] == 'p2':
             phaseTwo()
         elif sys.argv[1] == 'p3':
             phaseThree()
+        elif sys.argv[1] == 'bandaid':
+            monitor_soil_moisture()    
         else:
             print("Invalid argument")
     else:

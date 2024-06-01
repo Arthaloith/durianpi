@@ -99,7 +99,7 @@ def skip_water():
 
 @app.route('/poll', methods=['POST'])
 def poll():
-    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py &")
+    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py check &")
     return render_template('poll.html')
 #==============================================PUMP HISTORY================================================#
 @app.route('/history', methods=['POST'])
@@ -116,9 +116,9 @@ def clearHistory():
 def update_profile():
     name = request.form['profile_name']
     threshold = int(request.form['soil_moisture_threshold'])
-    db.add_or_update_profile(name, threshold)
+    pump_duration = int(request.form['pump_duration'])
+    db.add_or_update_profile(name, threshold, pump_duration)
     return redirect(url_for('profiles'))
-
 
 @app.route('/select_profile', methods=['POST'])
 def select_profile():
