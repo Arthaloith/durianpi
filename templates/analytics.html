@@ -40,54 +40,56 @@
             <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Kh?i ??ng L?i</a>
         </div>
     </div>
+    
+    <div class="main">
+        <div class="container">
+            <h1>Analytics</h1>
 
-    <div class="container">
-        <h1>Analytics</h1>
-
-        <div class="card">
-            <div class="card-body">
-                <h2>Most Active Day</h2>
-                {% if most_active_day %}
-                <p>Date: {{ most_active_day }}</p>
-                <p>Event Count: {{ most_active_day_count }}</p>
-                {% else %}
-                <p>No data available.</p>
-                {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <h2>Most Active Day</h2>
+                    {% if most_active_day %}
+                    <p>Date: {{ most_active_day }}</p>
+                    <p>Event Count: {{ most_active_day_count }}</p>
+                    {% else %}
+                    <p>No data available.</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-body">
-                <h2>Most Active Month</h2>
-                {% if most_active_month %}
-                <p>Month: {{ most_active_month }}</p>
-                <p>Event Count: {{ most_active_month_count }}</p>
-                {% else %}
-                <p>No data available.</p>
-                {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <h2>Most Active Month</h2>
+                    {% if most_active_month %}
+                    <p>Month: {{ most_active_month }}</p>
+                    <p>Event Count: {{ most_active_month_count }}</p>
+                    {% else %}
+                    <p>No data available.</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-body">
-                <h2>Least Active Day</h2>
-                {% if least_active_day %}
-                <p>Date: {{ least_active_day }}</p>
-                <p>Event Count: {{ least_active_day_count }}</p>
-                {% else %}
-                <p>No data available.</p>
-                {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <h2>Least Active Day</h2>
+                    {% if least_active_day %}
+                    <p>Date: {{ least_active_day }}</p>
+                    <p>Event Count: {{ least_active_day_count }}</p>
+                    {% else %}
+                    <p>No data available.</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        <div class="card">
-            <div class="card-body">
-                <h2>Total Events</h2>
-                {% if total_events %}
-                <p>Total Events: {{ total_events }}</p>
-                {% else %}
-                <p>No data available.</p>
-                {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <h2>Total Events</h2>
+                    {% if total_events %}
+                    <p>Total Events: {{ total_events }}</p>
+                    {% else %}
+                    <p>No data available.</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
