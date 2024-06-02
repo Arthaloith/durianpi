@@ -64,6 +64,20 @@ def runPump(duration):
     
     db.log_pump_run(entry)
 
+
+def forceRun():
+    profile = db.get_active_profile()
+    if not profile:
+        pump_duration = 30 
+    else:
+        pump_duration = profile['pump_duration']
+        runPump(pump_duration)
+        readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        duration_str = pump_duration + ' seconds'
+
+        entry = (readable_timestamp, 'Manual pump run', duration_str)
+        db.log_pump_run(entry)
+
 def skipPump():
     readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     duration_str = f'{consts.PUMP_DURATION} seconds'
@@ -181,7 +195,7 @@ def phaseThree():
 if __name__ == "__main__":
     if len(sys.argv) == 2:
         if sys.argv[1] == 'runnow':
-            runPump()
+            forceRun()
         elif sys.argv[1] == 'createdb':
             db.create_tables()
         elif sys.argv[1] == 'createpf':
