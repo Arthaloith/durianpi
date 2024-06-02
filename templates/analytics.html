@@ -34,47 +34,47 @@
 
             <div class="card">
                 <div class="card-body">
-                    <h2>Most Active Day</h2>
+                    <h2>Ngày Tưới Nhiều Nhất</h2>
                     {% if most_active_day %}
-                    <p>Date: {{ most_active_day }}</p>
-                    <p>Event Count: {{ most_active_day_count }}</p>
+                    <p>Ngày: {{ most_active_day }}</p>
+                    <p>Lần tưới: {{ most_active_day_count }}</p>
                     {% else %}
-                    <p>No data available.</p>
+                    <p>Không có dữ liệu.</p>
                     {% endif %}
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
-                    <h2>Most Active Month</h2>
+                    <h2>Tháng Tưới Nhiều Nhất</h2>
                     {% if most_active_month %}
-                    <p>Month: {{ most_active_month }}</p>
-                    <p>Event Count: {{ most_active_month_count }}</p>
+                    <p>Tháng: {{ most_active_month }}</p>
+                    <p>Lần tưới: {{ most_active_month_count }}</p>
                     {% else %}
-                    <p>No data available.</p>
+                    <p>Không có dữ liệu.</p>
                     {% endif %}
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
-                    <h2>Least Active Day</h2>
+                    <h2>Ngày Tưới Ít Nhất</h2>
                     {% if least_active_day %}
-                    <p>Date: {{ least_active_day }}</p>
-                    <p>Event Count: {{ least_active_day_count }}</p>
+                    <p>Ngày: {{ least_active_day }}</p>
+                    <p>Lần tưới: {{ least_active_day_count }}</p>
                     {% else %}
-                    <p>No data available.</p>
+                    <p>Không có dữ liệu.</p>
                     {% endif %}
                 </div>
             </div>
 
             <div class="card">
                 <div class="card-body">
-                    <h2>Total Events</h2>
+                    <h2>Tổng Lần Tưới</h2>
                     {% if total_events %}
-                    <p>Total Events: {{ total_events }}</p>
+                    <p>Tổng: {{ total_events }}</p>
                     {% else %}
-                    <p>No data available.</p>
+                    <p>Không có dữ liệu.</p>
                     {% endif %}
                 </div>
             </div>
