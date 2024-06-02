@@ -210,3 +210,97 @@ def delete_profile(profile_id):
     finally:
         if conn:
             conn.close()
+
+#========================================================================================================#
+#                                                                                                        #
+#                                          ANALYTIC DATABASE STUFF                                       #
+#                                                                                                        #
+#========================================================================================================#  
+def get_most_active_day():
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT strftime('%Y-%m-%d', timestamp) AS date, COUNT(*) AS event_count
+            FROM pump_log
+            GROUP BY date
+            ORDER BY event_count DESC
+            LIMIT 1
+        ''')
+        result = cursor.fetchone()
+        if result:
+            return result[0], result[1]
+        else:
+            return None, None
+    except sqlite3.Error as e:
+        print(e)
+        return None, None
+    finally:
+        if conn:
+            conn.close()
+
+def get_most_active_month():
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT strftime('%Y-%m', timestamp) AS month, COUNT(*) AS event_count
+            FROM pump_log
+            GROUP BY month
+            ORDER BY event_count DESC
+            LIMIT 1
+        ''')
+        result = cursor.fetchone()
+        if result:
+            return result[0], result[1]
+        else:
+            return None, None
+    except sqlite3.Error as e:
+        print(e)
+        return None, None
+    finally:
+        if conn:
+            conn.close()
+
+def get_least_active_day():
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT strftime('%Y-%m-%d', timestamp) AS date, COUNT(*) AS event_count
+            FROM pump_log
+            GROUP BY date
+            ORDER BY event_count ASC
+            LIMIT 1
+        ''')
+        result = cursor.fetchone()
+        if result:
+            return result[0], result[1]
+        else:
+            return None, None
+    except sqlite3.Error as e:
+        print(e)
+        return None, None
+    finally:
+        if conn:
+            conn.close()
+
+def get_total_events():
+    try:
+        conn = create_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT COUNT(*) AS total_events
+            FROM pump_log
+        ''')
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            return None
+    except sqlite3.Error as e:
+        print(e)
+        return None
+    finally:
+        if conn:
+            conn.close()
