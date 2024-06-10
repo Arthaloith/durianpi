@@ -1,10 +1,10 @@
 .button-container {
     text-align: center;
-    padding: 20px; /* Provides some space around the button */
+    padding: 20px;
 }
 
 .button {
-    display: inline-block; /* Allows text-align to affect it */
+    display: inline-block;
     padding: 10px 20px;
     text-decoration: none;
     color: #fff;
