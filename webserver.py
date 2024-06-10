@@ -99,7 +99,7 @@ def skip_water():
 
 @app.route('/poll', methods=['POST'])
 def poll():
-    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py &")
+    os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py check &")
     return render_template('poll.html')
 #==============================================PUMP HISTORY================================================#
 @app.route('/history', methods=['POST'])
@@ -116,9 +116,9 @@ def clearHistory():
 def update_profile():
     name = request.form['profile_name']
     threshold = int(request.form['soil_moisture_threshold'])
-    db.add_or_update_profile(name, threshold)
+    pump_duration = int(request.form['pump_duration'])
+    db.add_or_update_profile(name, threshold, pump_duration)
     return redirect(url_for('profiles'))
-
 
 @app.route('/select_profile', methods=['POST'])
 def select_profile():
@@ -217,6 +217,23 @@ def cron_job_page():
     cron_jobs = get_cron_jobs()
     available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &', '']
     return render_template('cron.html', available_commands=available_commands,cron_jobs=cron_jobs)
+
+#==============================================ANALYTICS=====================================================#
+@app.route('/analytics')
+def analytics():
+    most_active_day, most_active_day_count = db.get_most_active_day()
+    most_active_month, most_active_month_count = db.get_most_active_month()
+    least_active_day, least_active_day_count = db.get_least_active_day()
+    total_events = db.get_total_events()
+
+    return render_template('analytics.html',
+                           most_active_day=most_active_day,
+                           most_active_day_count=most_active_day_count,
+                           most_active_month=most_active_month,
+                           most_active_month_count=most_active_month_count,
+                           least_active_day=least_active_day,
+                           least_active_day_count=least_active_day_count,
+                           total_events=total_events)
 #==============================================SYSTEM CONTROL================================================#
 @app.route('/shutdown', methods=['POST'])
 def shutdown():

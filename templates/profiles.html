@@ -17,20 +17,21 @@
             <a href="/camera">Xem Camera</a>
             <a href="/profiles" type="submit">Quản Lý Profile</a>
             <a href="/cron" type="submit">Quản Lý Cronjob</a>
-            <!-- Add more buttons here -->
+            <a href="/analytics" type="submit">Thống Kê</a>
         </div>
         <div class="sidebar-bottom">
             <a href="/shutdown" onclick="sendPostRequest(event, '/shutdown')">Tắt Máy</a>
             <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Khởi Động Lại</a>
         </div>
     </div>
-
+    
     <div class="main">
         <h1>Quản Lý Profile</h1>
         <div class="active-profile-info">
             <h2 style="text-align:center">Profile Đang Dùng</h2>
             <p>Tên: <strong>{{ active_profile.name if active_profile else 'None selected' }}</strong></p>
             <p>Giới Hạn Độ Ẩm Đất Hiện Tại: <strong>{{ active_profile.soil_moisture_threshold if active_profile else 'N/A' }}</strong></p>
+            <p>Thời gian tưới: <strong>{{ active_profile.pump_duration if active_profile else 'N/A' }}</strong></p>
         </div>
 
         
@@ -54,6 +55,8 @@
                 <input type="text" id="profile_name" name="profile_name" required>
                 <label for="soil_moisture_threshold">Giới Hạn Độ Ẩm Đất:</label>
                 <input type="number" id="soil_moisture_threshold" name="soil_moisture_threshold" required>
+                <label for="pump_duration">Thời gian tưới:</label>
+                <input type="number" id="pump_duration" name="pump_duration" required>
                 <button type="submit">Lưu Profile</button>
             </form>
         </div>
@@ -63,7 +66,9 @@
                 <tr>
                     <th>Tên Profile</th>
                     <th>Giới Hạn Độ Ẩm Đất</th>
+                    <th>Thời gian tưới</th>
                     <th>Hành Động</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -71,6 +76,7 @@
                 <tr>
                     <td>{{ profile['name'] }}</td>
                     <td>{{ profile['soil_moisture_threshold'] }}</td>
+                    <td>{{ profile['pump_duration'] }}</td>
                     <td>
                         <form action="{{ url_for('delete_profile', profile_id=profile['id']) }}" method="post">
                             <button type="submit" onclick="return confirm('Bạn có chắc bạn muốn xóa profile này?');">Delete</button>

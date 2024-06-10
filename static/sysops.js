@@ -1,5 +1,5 @@
 function sendPostRequest(event, url) {
-    event.preventDefault(); // Prevent the default link behavior
+    event.preventDefault(); 
 
     const form = document.createElement('form');
     form.method = 'POST';

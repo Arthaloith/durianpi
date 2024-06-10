@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thống Kê</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/sidebar.css" type="text/css"/>
+    <link rel="stylesheet" href="static/index.css" type="text/css" />
+    <style>
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidenav">
+        <h1 style="text-align: left; padding: 14px;">Menu</h1>
+        <div class="sidebar-links">
+            <a href="/">Bảng Điều Khiển</a>
+            <a href="/camera">Xem Camera</a>
+            <a href="/profiles" type="submit">Quản Lý Profile</a>
+            <a href="/cron" type="submit">Quản Lý Cronjob</a>
+            <a href="/analytics" type="submit">Thống Kê</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/shutdown" onclick="sendPostRequest(event, '/shutdown')">Tắt Máy</a>
+            <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Khởi Động Lại</a>
+        </div>
+    </div>
+    
+    <div class="main">
+        <div class="container">
+            <h1>Thống Kê</h1>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2>Ngày Tưới Nhiều Nhất</h2>
+                    {% if most_active_day %}
+                    <p>Ngày: {{ most_active_day }}</p>
+                    <p>Lần tưới: {{ most_active_day_count }}</p>
+                    {% else %}
+                    <p>Không có dữ liệu.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2>Tháng Tưới Nhiều Nhất</h2>
+                    {% if most_active_month %}
+                    <p>Tháng: {{ most_active_month }}</p>
+                    <p>Lần tưới: {{ most_active_month_count }}</p>
+                    {% else %}
+                    <p>Không có dữ liệu.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2>Ngày Tưới Ít Nhất</h2>
+                    {% if least_active_day %}
+                    <p>Ngày: {{ least_active_day }}</p>
+                    <p>Lần tưới: {{ least_active_day_count }}</p>
+                    {% else %}
+                    <p>Không có dữ liệu.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2>Tổng Lần Tưới</h2>
+                    {% if total_events %}
+                    <p>Tổng: {{ total_events }}</p>
+                    {% else %}
+                    <p>Không có dữ liệu.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
