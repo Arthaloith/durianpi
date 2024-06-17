@@ -89,7 +89,32 @@ def get_soil_moisture():
     soil_value = chan.value / 64
     moisture_percentage = 100 - math.ceil((soil_value / 1024) * 100)
     return moisture_percentage
-  
+
+
+def print_soil_moisture():
+        print(get_soil_moisture())
+
+def counter_bs():
+    count = 0
+    while True:
+        soil_moisture = get_soil_moisture()
+        print(soil_moisture)
+        if soil_moisture == 100:
+            count += 1
+            if count == 2:
+                break
+            print_soil_moisture()
+            time.sleep(10)  
+        else:
+            time.sleep(1) 
+
+def monitor_soil_moisture():
+    while True:
+        counter_bs()
+        print("Soil moisture reached 100 for the second time. Restarting monitoring...")
+        time.sleep(5)  # Wait for 5 seconds before restarting
+
+
 def activateChecknPump():
     profile = db.get_active_profile()
     if not profile:
