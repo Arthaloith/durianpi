@@ -90,7 +90,6 @@ def get_soil_moisture():
     moisture_percentage = 100 - math.ceil((soil_value / 1024) * 100)
     return moisture_percentage
 
-
 def print_soil_moisture():
         print(get_soil_moisture())
 
@@ -147,17 +146,21 @@ def heartBeat():
 # Phase 1: small plant
 def phaseOne():
     soil_value = get_soil_moisture()
-    if soil_value < 70:
+    if soil_value < 65:
         pumpRelay.on()
-        time.sleep(14)
+        time.sleep(840)
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         entry = (readable_timestamp, 'Pump Run', '14 seconds')
         db.log_pump_run(entry)
+    elif soil_value > 80:
+        readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
+        db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')   
+        entry = (readable_timestamp, 'Pump Run (failed, within desired range)', 'N/A')
         db.log_pump_run(entry)
         
 # Phase 2: blooming plant
@@ -165,11 +168,11 @@ def phaseTwo():
     soil_value = get_soil_moisture()
     if soil_value < 60:
         pumpRelay.on()
-        time.sleep(14)
+        time.sleep(266)
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run', '14 seconds')
+        entry = (readable_timestamp, 'Pump Run', '20 seconds')
         db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -178,6 +181,27 @@ def phaseTwo():
         
 # Phase 3: fruiting plant
 def phaseThree():
+    soil_value = get_soil_moisture()
+    if soil_value < 70:
+        pumpRelay.on()
+        time.sleep(14)
+        pumpRelay.off()
+        
+        readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        entry = (readable_timestamp, 'Pump Run', '14 seconds')
+        
+        db.log_pump_run(entry)
+    elif soil_value > 90:
+        readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
+        db.log_pump_run(entry)
+    else:
+        readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        entry = (readable_timestamp, 'Pump Run (failed, within desired range)', 'N/A')
+        db.log_pump_run(entry)
+
+# Phase 4: Riping fruits
+def phaseFour():
     soil_value = get_soil_moisture()
     if soil_value < 50:
         pumpRelay.on()
@@ -188,9 +212,13 @@ def phaseThree():
         entry = (readable_timestamp, 'Pump Run', '14 seconds')
         
         db.log_pump_run(entry)
-    else:
+    elif soil_value > 60:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         entry = (readable_timestamp, 'Pump Run (failed, too wet)', 'N/A')
+        db.log_pump_run(entry)
+    else:
+        readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        entry = (readable_timestamp, 'Pump Run (failed, within desired range)', 'N/A')
         db.log_pump_run(entry)
 #========================================================================================================#        
 if __name__ == "__main__":
@@ -212,7 +240,9 @@ if __name__ == "__main__":
         elif sys.argv[1] == 'p2':
             phaseTwo()
         elif sys.argv[1] == 'p3':
-            phaseThree()   
+            phaseThree() 
+        elif sys.argv[1] == 'p4':
+            phaseFour()   
         elif sys.argv[1] == 'bandaid':
             monitor_soil_moisture()
         else:
