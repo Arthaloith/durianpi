@@ -213,6 +213,8 @@ if __name__ == "__main__":
             phaseTwo()
         elif sys.argv[1] == 'p3':
             phaseThree()   
+        elif sys.argv[1] == 'bandaid':
+            monitor_soil_moisture()
         else:
             print("Invalid argument")
     else:
