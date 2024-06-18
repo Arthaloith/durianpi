@@ -302,7 +302,7 @@ def logout():
 @login_required
 def admin_page():
     if not current_user.is_admin():
-        flash("Only admins can access the admin page", "error")
+        flash("Chỉ có admin mới được truy cập trang quản trị", "error")
         return redirect(url_for("index"))
 
     if request.method == "POST":
@@ -314,7 +314,7 @@ def admin_page():
             # Check if the username already exists
             existing_user = user_db.get_user(username)
             if existing_user:
-                flash(f"Username '{username}' already exists.", "error")
+                flash(f"Tên người dùng '{username}' tồn tại.", "error")
                 return redirect(url_for("admin_page"))
 
             user_db.create_user(username, password, role)

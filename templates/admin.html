@@ -20,21 +20,21 @@
         <div class="sidebar-bottom">
             <a href="/shutdown" onclick="sendPostRequest(event, '/shutdown')">Tắt Máy</a>
             <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Khởi Động Lại</a>
-            <a href="/logout" onclick="sendPostRequest(event, '/logout')">logout</a>
+            <a href="/logout" onclick="sendPostRequest(event, '/logout')">Đăng xuất</a>
         </div>
     </div>
 
     <div class="main">
         <div class="container">
-            <h1>Admin Page</h1>
-            <h2>Users</h2>
+            <h1>Trang Admin</h1>
+            <h2>Danh sách người dùng</h2>
             <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Username</th>
-                        <th>Role</th>
-                        <th>Actions</th>
+                        <th>Vai trò</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,18 +47,18 @@
                             <form action="{{ url_for('admin_page') }}" method="post">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="user_id" value="{{ user.id }}">
-                                <button type="submit" class="btn btn-danger">Delete</button>
+                                <button type="submit" class="btn btn-danger">Xóa</button>
                             </form>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-            <h2>Update User</h2>
+            <h2>Cập nhật người dùng</h2>
             <form action="{{ url_for('admin_page') }}" method="post" class="form">
                 <input type="hidden" name="action" value="update">
                 <div class="form-group">
-                    <label for="update_user_id">User ID:</label>
+                    <label for="update_user_id">ID người dùng:</label>
                     <input type="text" id="update_user_id" name="user_id" required>
                 </div>
                 <div class="form-group">
@@ -66,15 +66,15 @@
                     <input type="text" id="update_username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="update_role">Role:</label>
+                    <label for="update_role">Vai trò:</label>
                     <select id="update_role" name="role" required>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
             </form>
-            <h2>Create User</h2>
+            <h2>Tạo người dùng</h2>
             <form action="{{ url_for('admin_page') }}" method="post" class="form">
                 <input type="hidden" name="action" value="create">
                 <div class="form-group">
@@ -82,17 +82,17 @@
                     <input type="text" id="create_username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="create_password">Password:</label>
+                    <label for="create_password">Mật khẩu:</label>
                     <input type="password" id="create_password" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label for="create_role">Role:</label>
+                    <label for="create_role">Vai trò:</label>
                     <select id="create_role" name="role" required>
                         <option value="admin">Admin</option>
                         <option value="user">User</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-success">Create</button>
+                <button type="submit" class="btn btn-success">Tạo</button>
             </form>
         </div>
     </div>
