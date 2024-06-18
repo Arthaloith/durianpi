@@ -199,6 +199,12 @@ def phaseFour():
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         entry = (readable_timestamp, 'Pump Run (failed, within desired range)', 'N/A')
         db.log_pump_run(entry)
+
+def heartBeat():
+    readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    entry = (readable_timestamp, 'Heartbeat', '1')
+    
+    db.log_pump_run(entry)
 #========================================================================================================#        
 if __name__ == "__main__":
     if len(sys.argv) == 2:
@@ -225,4 +231,4 @@ if __name__ == "__main__":
         else:
             print("Invalid argument")
     else:
-        forceRun()
+        heartBeat()
