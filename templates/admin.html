@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Admin Page</h1>
+  <div id="app">
+    <h2>Manage Users</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in users">
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>
+            <select v-model="user.role">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </td>
+          <td>
+            <button @click="updateUser(user)">Update</button>
+            <button @click="deleteUser(user.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>Create New User</h2>
+    <form @submit.prevent="createUser">
+      <label for="username">Username:</label>
+      <input type="text" id="username" v-model="newUser.username" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" v-model="newUser.password" required>
+      <label for="role">Role:</label>
+      <select id="role" v-model="newUser.role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit">Create User</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        users: [],
+        newUser: {
+          username: '',
+          password: '',
+          role: 'user'
+        }
+      },
+      mounted() {
+        this.fetchUsers();
+      },
+      methods: {
+        fetchUsers() {
+          fetch('/users')
+            .then(response => response.json())
+            .then(data => this.users = data);
+        },
+        createUser() {
+          fetch('/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(this.newUser)
+          })
+          .then(response => response.json())
+          .then(data => {
+            this.fetchUsers();
+            this.newUser = {
+              username: '',
+              password: '',
+              role: 'user'
+            };
+          });
+        },
+        updateUser(user) {
+          fetch(`/users/${user.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: user.username, role: user.role })
+          })
+          .then(response => response.json())
+          .then(data => {
+            this.fetchUsers();
+          });
+        },
+        deleteUser(id) {
+          fetch(`/users/${id}`, {
+            method: 'DELETE'
+          })
+          .then(response => response.json())
+          .then(data => {
+            this.fetchUsers();
+          });
+        }
+      }
+    });
+  </script>
+{% endblock %}
