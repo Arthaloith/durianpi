@@ -1,6 +1,6 @@
-#!/home/admin/Projects/durianpi/myenv/bin/python3
+#!/home/admin/Projects/durianpi/myenv/bin/python
 
-# Copyright (c) 2019-2024, Emmanuel Blot <emmanuel.blot@free.fr>
+# Copyright (c) 2019-2022, Emmanuel Blot <emmanuel.blot@free.fr>
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -9,7 +9,7 @@
 
 from argparse import ArgumentParser, FileType
 from logging import Formatter, StreamHandler, DEBUG, ERROR
-from sys import exit as sys_exit, modules, stderr
+from sys import modules, stderr
 from traceback import format_exc
 from pyftdi import FtdiLogger
 from pyftdi.ftdi import Ftdi
@@ -45,7 +45,7 @@ def main():
         FtdiLogger.log.addHandler(StreamHandler(stderr))
 
         if args.virtual:
-            # pylint: disable=import-outside-toplevel
+            #pylint: disable-msg=import-outside-toplevel
             from pyftdi.usbtools import UsbTools
             # Force PyUSB to use PyFtdi test framework for USB backends
             UsbTools.BACKENDS = ('pyftdi.tests.backend.usbvirt', )
@@ -62,12 +62,12 @@ def main():
         Ftdi.show_devices()
 
     except (ImportError, IOError, NotImplementedError, ValueError) as exc:
-        print(f'\nError: {exc}', file=stderr)
+        print('\nError: %s' % exc, file=stderr)
         if debug:
             print(format_exc(chain=False), file=stderr)
-        sys_exit(1)
+        exit(1)
     except KeyboardInterrupt:
-        sys_exit(2)
+        exit(2)
 
 
 if __name__ == '__main__':

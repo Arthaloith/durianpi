@@ -1,9 +1,9 @@
-#!/home/admin/Projects/durianpi/myenv/bin/python3
+#!/home/admin/Projects/durianpi/myenv/bin/python
 
 """Simple FTDI EEPROM configurator.
 """
 
-# Copyright (c) 2019-2024, Emmanuel Blot <emmanuel.blot@free.fr>
+# Copyright (c) 2019-2022, Emmanuel Blot <emmanuel.blot@free.fr>
 # All rights reserved.
 #
 # SPDX-License-Identifier: BSD-3-Clause
@@ -11,7 +11,7 @@
 from argparse import ArgumentParser, FileType
 from io import StringIO
 from logging import Formatter, StreamHandler, DEBUG, ERROR
-from sys import exit as sys_exit, modules, stderr, stdout
+from sys import modules, stderr, stdout
 from textwrap import fill
 from traceback import format_exc
 from pyftdi import FtdiLogger
@@ -19,9 +19,9 @@ from pyftdi.eeprom import FtdiEeprom
 from pyftdi.ftdi import Ftdi
 from pyftdi.misc import add_custom_devices, hexdump
 
-# pylint: disable=too-many-locals
-# pylint: disable=too-many-branches
-# pylint: disable=too-many-statements
+#pylint: disable-msg=too-many-locals
+#pylint: disable-msg=too-many-branches
+#pylint: disable-msg=too-many-statements
 
 
 def main():
@@ -86,9 +86,9 @@ def main():
 
         extra = argparser.add_argument_group(title='Extras')
         extra.add_argument('-v', '--verbose', action='count', default=0,
-                           help='increase verbosity')
+                               help='increase verbosity')
         extra.add_argument('-d', '--debug', action='store_true',
-                           help='enable debug mode')
+                               help='enable debug mode')
         args = argparser.parse_args()
         debug = args.debug
 
@@ -107,7 +107,7 @@ def main():
         FtdiLogger.log.addHandler(StreamHandler(stderr))
 
         if args.virtual:
-            # pylint: disable=import-outside-toplevel
+            #pylint: disable-msg=import-outside-toplevel
             from pyftdi.usbtools import UsbTools
             # Force PyUSB to use PyFtdi test framework for USB backends
             UsbTools.BACKENDS = ('pyftdi.tests.backend.usbvirt', )
@@ -138,12 +138,13 @@ def main():
                 helpstr = ', '.join(sorted(eeprom.properties))
                 print(fill(helpstr, initial_indent='  ',
                            subsequent_indent='  '))
-                sys_exit(1)
+                exit(1)
             for sep in ':=':
                 if sep in conf:
                     name, value = conf.split(sep, 1)
                     if not value:
-                        argparser.error(f'Configuration {conf} without value')
+                        argparser.error('Configuration %s without value' %
+                                        conf)
                     if value == 'help':
                         value = '?'
                     helpio = StringIO()
@@ -152,10 +153,10 @@ def main():
                     if helpstr:
                         print(fill(helpstr, initial_indent='  ',
                                    subsequent_indent='  '))
-                        sys_exit(1)
+                        exit(1)
                     break
             else:
-                argparser.error(f'Missing name:value separator in {conf}')
+                argparser.error('Missing name:value separator in %s' % conf)
         if args.vid:
             eeprom.set_property('vendor_id', args.vid)
         if args.pid:
@@ -165,7 +166,7 @@ def main():
         if args.hexblock is not None:
             indent = ' ' * args.hexblock
             for pos in range(0, len(eeprom.data), 16):
-                hexa = ' '.join([f'{x:02x}' for x in eeprom.data[pos:pos+16]])
+                hexa = ' '.join(['%02x' % x for x in eeprom.data[pos:pos+16]])
                 print(indent, hexa, sep='')
         if args.update:
             if eeprom.commit(False, no_crc=args.full_erase):
@@ -180,12 +181,12 @@ def main():
                     eeprom.save_config(ofp)
 
     except (ImportError, IOError, NotImplementedError, ValueError) as exc:
-        print(f'\nError: {exc}', file=stderr)
+        print('\nError: %s' % exc, file=stderr)
         if debug:
             print(format_exc(chain=False), file=stderr)
-        sys_exit(1)
+        exit(1)
     except KeyboardInterrupt:
-        sys_exit(2)
+        exit(2)
 
 
 if __name__ == '__main__':
