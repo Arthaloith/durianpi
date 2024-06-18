@@ -267,6 +267,11 @@ class UserLogin(UserMixin):
 
     def get_id(self):
         return str(self.id)
+    
+    
+    def is_admin(self):
+        user = user_db.get_user_by_id(self.id)
+        return user is not None and user.role == 'admin'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -274,17 +279,6 @@ def load_user(user_id):
     if user:
         return UserLogin(user.id)
     return None
-
-@app.route("/register", methods=["POST"])
-@login_required
-def register_user():
-    if current_user.role != 'admin':
-        return jsonify({"error": "Only admins can create new users"}), 403
-    username = request.json["username"]
-    password = request.json["password"]
-    role = request.json.get("role", "user")
-    user_db.create_user(username, password, role)
-    return jsonify({"message": "User created successfully"}), 201
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -307,35 +301,13 @@ def logout():
     else:
         return redirect(url_for("logout"))
 
-@app.route("/users", methods=["GET"])
-@login_required
-def get_users():
-    if current_user.role != 'admin':
-        return jsonify({"error": "Only admins can view all users"}), 403
-    users = user_db.get_all_users()
-    return jsonify([{"id": u.id, "username": u.username, "role": u.role} for u in users])
-
-@app.route("/users/<id>", methods=["PUT", "DELETE"])
-@login_required
-def update_or_delete_user(id):
-    if current_user.role != 'admin':
-        return jsonify({"error": "Only admins can update or delete users"}), 403
-    user = user_db.get_user_by_id(id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-    if request.method == "PUT":
-        user_db.update_user(id, request.json.get("username", user.username), request.json.get("role", user.role))
-        return jsonify({"message": "User updated successfully"}), 200
-    elif request.method == "DELETE":
-        user_db.delete_user(id)
-        return jsonify({"message": "User deleted successfully"}), 200
-
 @app.route("/admin", methods=["GET"])
 @login_required
 def admin_page():
-    if current_user.role != 'admin':
+    if not current_user.is_admin():
         return jsonify({"error": "Only admins can access the admin page"}), 403
-    return render_template("admin.html")
+    users = user_db.get_all_users()
+    return render_template("admin.html", users=users)
 #==============================================SYSTEM CONTROL================================================#
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
