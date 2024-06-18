@@ -1,112 +1,100 @@
-<!-- admin.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>Admin Page</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/admin.css">
+    <link rel="stylesheet" href="static/sidebar.css" type="text/css"/>
+    <script src="../static/logout.js"></script>
 </head>
 <body>
-    <h1>Admin Page</h1>
-    <h2>Users</h2>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Actions</th>
-        </tr>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.role }}</td>
-            <td>
-                <a href="#" onclick="updateUser({{ user.id }})">Update</a>
-                <a href="#" onclick="deleteUser({{ user.id }})">Delete</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="sidenav">
+        <h1 style="text-align: left; padding: 14px;">Menu</h1>
+        <div class="sidebar-links">
+            <a href="/">Bảng Điều Khiển</a>
+            <a href="/camera">Xem Camera</a>
+            <a href="/profiles" type="submit">Quản Lý Profile</a>
+            <a href="/cron" type="submit">Quản Lý Cronjob</a>
+            <a href="/analytics" type="submit">Thống Kê</a>
+            <a href="/admin" type="submit">Admin</a>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="/shutdown" onclick="sendPostRequest(event, '/shutdown')">Tắt Máy</a>
+            <a href="/reboot" onclick="sendPostRequest(event, '/reboot')">Khởi Động Lại</a>
+            <a href="/logout" onclick="sendPostRequest(event, '/logout')">logout</a>
+        </div>
+    </div>
 
-    <h2>Create New User</h2>
-    <form id="create-user-form">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username"><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password"><br><br>
-        <label for="role">Role:</label>
-        <select id="role" name="role">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select><br><br>
-        <input type="submit" value="Create User">
-    </form>
-
-    <h2>Update User</h2>
-    <form id="update-user-form" style="display: none;">
-        <label for="username">Username:</label>
-        <input type="text" id="update-username" name="username"><br><br>
-        <label for="role">Role:</label>
-        <select id="update-role" name="role">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select><br><br>
-        <input type="hidden" id="update-id" name="id">
-        <input type="submit" value="Update User">
-    </form>
-
-    <script>
-        function updateUser(userId) {
-            document.getElementById("update-id").value = userId;
-            document.getElementById("update-user-form").style.display = "block";
-        }
-
-        function deleteUser(userId) {
-            if (confirm("Are you sure you want to delete user " + userId + "?")) {
-                window.location.href = "/users/" + userId + "?_method=DELETE";
-            }
-        }
-
-        document.getElementById("create-user-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            var formData = new FormData(this);
-            fetch("/register", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                window.location.reload();
-            })
-            .catch(error => console.error(error));
-        });
-
-        document.getElementById("update-user-form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            var formData = new FormData(this);
-            fetch("/users/" + formData.get("id"), {
-                method: "PUT",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                window.location.reload();
-            })
-            .catch(error => console.error(error));
-        });
-    </script>
+    <div class="main">
+        <div class="container">
+            <h1>Admin Page</h1>
+            <h2>Users</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>
+                            <form action="{{ url_for('admin_page') }}" method="post">
+                                <input type="hidden" name="action" value="delete">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <h2>Update User</h2>
+            <form action="{{ url_for('admin_page') }}" method="post" class="form">
+                <input type="hidden" name="action" value="update">
+                <div class="form-group">
+                    <label for="update_user_id">User ID:</label>
+                    <input type="text" id="update_user_id" name="user_id" required>
+                </div>
+                <div class="form-group">
+                    <label for="update_username">Username:</label>
+                    <input type="text" id="update_username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="update_role">Role:</label>
+                    <select id="update_role" name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+            <h2>Create User</h2>
+            <form action="{{ url_for('admin_page') }}" method="post" class="form">
+                <input type="hidden" name="action" value="create">
+                <div class="form-group">
+                    <label for="create_username">Username:</label>
+                    <input type="text" id="create_username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="create_password">Password:</label>
+                    <input type="password" id="create_password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="create_role">Role:</label>
+                    <select id="create_role" name="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Create</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

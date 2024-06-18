@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../static/scripts.js"></script>
     <script src="../static/sysops.js"></script>
+    <script src="../static/logout.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/SpeechKITT/0.3.0/speechkitt.min.js"></script>
 </head>
@@ -31,6 +32,9 @@
     </div>
 
     <div class="main">
+        {% for mesg in get_flashed_messages() %}
+        <h1 style="color:red;">{{ mesg }}</h1>
+        {% endfor %}
         <h1>Bảng Điều Khiển</h1>
         <p>Lần tưới gần đây nhất: {{ latest_pump_run.timestamp }} (thời gian tưới: {{ latest_pump_run.duration }})</p>
         <h2 style="text-align:center">Thông Tin Hệ Thống</h2>
@@ -84,9 +88,6 @@
         <div class="button-group">
             <form action="/force_water" method="post">
                 <button type="submit">Tưới Thủ Công</button>
-            </form>
-            <form action="/skip_water" method="post">
-                <button type="submit">Bỏ Qua Lần Tưới Tiếp Theo</button>
             </form>
             <form action="/poll" method="post">
                 <button type="submit">Kiểm Tra </button>

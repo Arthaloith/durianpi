@@ -1,0 +1,92 @@
+
+body {
+font-family: 'Roboto', sans-serif;
+margin: 0;
+padding: 0;
+}
+
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 40px;
+}
+
+/* Sidebar Styles */
+.sidenav {
+height: 100%;
+width: 200px;
+position: fixed;
+z-index: 1;
+top: 0;
+left: 0;
+background-color: #f1f1f1;
+overflow-x: hidden;
+padding-top: 20px;
+}
+
+.sidenav h1 {
+padding: 6px 8px 6px 16px;
+text-decoration: none;
+font-size: 25px;
+color: #818181;
+display: block;
+}
+
+.sidebar-links a {
+padding: 6px 8px 6px 16px;
+text-decoration: none;
+font-size: 20px;
+color: #818181;
+display: block;
+}
+
+.sidebar-links a:hover {
+color: #2196F3;
+}
+
+.sidebar-bottom {
+position: absolute;
+bottom: 0;
+width: 100%;
+padding: 10px;
+text-align: center;
+}
+
+.sidebar-bottom a {
+display: block;
+padding: 6px 8px;
+text-decoration: none;
+font-size: 16px;
+color: #818181;
+}
+
+.sidebar-bottom a:hover {
+color: #2196F3;
+}
+
+/* Main Content Styles */
+.main {
+margin-left: 200px;
+padding: 0px 10px;
+}
+
+.card {
+border: 1px solid #ddd;
+border-radius: 5px;
+box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+margin-bottom: 20px;
+}
+
+.card-body {
+padding: 20px;
+}
+
+.card h2 {
+font-size: 24px;
+margin-bottom: 10px;
+}
+
+.card p {
+font-size: 18px;
+margin-bottom: 5px;
+}

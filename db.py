@@ -24,7 +24,7 @@ class User:
             with self.conn as conn:
                 conn.execute('''
                     CREATE TABLE IF NOT EXISTS users
-                    (id INTEGER PRIMARY KEY, username TEXT NOT NULL, password TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user')
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user')
                 ''')
         except sqlite3.Error as e:
             print(e)

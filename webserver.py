@@ -3,7 +3,7 @@
 #                                               LIBRARY IMPORTS                                          #
 #                                                                                                        #
 #========================================================================================================#
-from flask import Flask, Response,redirect, render_template, jsonify, request, url_for
+from flask import Flask, Response,redirect, render_template, jsonify, request, url_for, flash
 import db
 import os
 import pumpcontrol
@@ -31,14 +31,11 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 user_db = User('cache/database.db')
 #camera module
-try:
-    picam2 = Picamera2()
-    preview_config = picam2.create_preview_configuration()
-    preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
-    picam2.configure(preview_config)
-    picam2.start()
-except Exception as e:
-    print(f"Error initializing Picamera2: {e}")
+picam2 = Picamera2()
+preview_config = picam2.create_preview_configuration()
+preview_config['main'] = {"size": (640, 480), "format": "YUV420"}
+picam2.configure(preview_config)
+picam2.start()
 #DTH22 sensor
 dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
 #========================================================================================================#
@@ -301,11 +298,35 @@ def logout():
     else:
         return redirect(url_for("logout"))
 
-@app.route("/admin", methods=["GET"])
+@app.route("/admin", methods=["GET", "POST"])
 @login_required
 def admin_page():
     if not current_user.is_admin():
-        return jsonify({"error": "Only admins can access the admin page"}), 403
+        flash("Only admins can access the admin page", "error")
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        if request.form["action"] == "create":
+            username = request.form["username"]
+            password = request.form["password"]
+            role = request.form["role"]
+
+            # Check if the username already exists
+            existing_user = user_db.get_user(username)
+            if existing_user:
+                flash(f"Username '{username}' already exists.", "error")
+                return redirect(url_for("admin_page"))
+
+            user_db.create_user(username, password, role)
+        elif request.form["action"] == "update":
+            user_id = request.form["user_id"]
+            username = request.form["username"]
+            role = request.form["role"]
+            user_db.update_user(user_id, username, role)
+        elif request.form["action"] == "delete":
+            user_id = request.form["user_id"]
+            user_db.delete_user(user_id)
+
     users = user_db.get_all_users()
     return render_template("admin.html", users=users)
 #==============================================SYSTEM CONTROL================================================#

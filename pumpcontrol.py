@@ -37,21 +37,6 @@ mcp = MCP.MCP3008(spi, cs)
 # Set up analog input channel
 chan = AnalogIn(mcp, MCP.P0)
 #========================================================================================================#
-# Kinda depricated i guess? the system used to be simpler and this thing here will activate pump automatically by comparing last pump run with interval but it's not needed anymore because cron happened
-def poll():
-    lastLog = db.get_latest_pump_run()
-    interval = 0
-
-    if lastLog is not None:
-        lastTimestamp = datetime.strptime(lastLog['timestamp'], '%Y-%m-%d %H:%M:%S')
-        interval = (datetime.now() - lastTimestamp).total_seconds()
-        print(interval)
-    else:
-        interval = PUMP_RUN_INTERVAL + 1
-
-    if interval > PUMP_RUN_INTERVAL:
-        activateChecknPump()
-
 def runPump(duration):
     pumpRelay.on()
     time.sleep(duration)
@@ -132,12 +117,6 @@ def activateChecknPump():
 
         entry = (readable_timestamp, 'Pump Run Failed due too moisture still too high', duration_str)
         db.log_pump_run(entry)
-            
-def heartBeat():
-    readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    entry = (readable_timestamp, 'Heartbeat', '1')
-    
-    db.log_pump_run(entry)
 #========================================================================================================#
 #                                                                                                        #
 #                                               DURIAN PROFILES                                          #
@@ -152,7 +131,7 @@ def phaseOne():
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run', '14 seconds')
+        entry = (readable_timestamp, 'Pump Run', '840 seconds')
         db.log_pump_run(entry)
     elif soil_value > 80:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -172,7 +151,7 @@ def phaseTwo():
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run', '20 seconds')
+        entry = (readable_timestamp, 'Pump Run', '266 seconds')
         db.log_pump_run(entry)
     else:
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -184,11 +163,11 @@ def phaseThree():
     soil_value = get_soil_moisture()
     if soil_value < 70:
         pumpRelay.on()
-        time.sleep(14)
+        time.sleep(500)
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run', '14 seconds')
+        entry = (readable_timestamp, 'Pump Run', '500 seconds')
         
         db.log_pump_run(entry)
     elif soil_value > 90:
@@ -205,11 +184,11 @@ def phaseFour():
     soil_value = get_soil_moisture()
     if soil_value < 50:
         pumpRelay.on()
-        time.sleep(14)
+        time.sleep(336)
         pumpRelay.off()
         
         readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        entry = (readable_timestamp, 'Pump Run', '14 seconds')
+        entry = (readable_timestamp, 'Pump Run', '336 seconds')
         
         db.log_pump_run(entry)
     elif soil_value > 60:
@@ -233,8 +212,6 @@ if __name__ == "__main__":
             activateChecknPump()
         elif sys.argv[1] == 'skip':
             skipPump()
-        elif sys.argv[1] == 'poll':
-            poll()
         elif sys.argv[1] == 'p1':
             phaseOne()
         elif sys.argv[1] == 'p2':
@@ -248,5 +225,4 @@ if __name__ == "__main__":
         else:
             print("Invalid argument")
     else:
-        heartBeat()
-        poll()
+        forceRun()

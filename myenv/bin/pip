@@ -1,4 +1,4 @@
-#!/home/lilith/Projects/durianpi/myenv/bin/python
+#!/home/admin/Projects/durianpi/myenv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
