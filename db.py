@@ -5,10 +5,90 @@
 #========================================================================================================#
 import sqlite3
 from datetime import datetime
+from sqlite3 import Error
+from werkzeug.security import generate_password_hash, check_password_hash
 #========================================================================================================#
+#========================================================================================================#
+#                                                                                                        #
+#                                          USER DATABASE STUFF                                           #
+#                                                                                                        #
+#========================================================================================================# 
 # Database file path
 DATABASE_FILE = "cache/database.db"
 
+class User:
+    def __init__(self, db_file):
+        self.db_file = db_file
+
+    @property
+    def conn(self):
+        return sqlite3.connect(self.db_file)
+
+    def create_table(self):
+        try:
+            with self.conn as conn:
+                conn.execute('''
+                    CREATE TABLE IF NOT EXISTS users
+                    (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user')
+                ''')
+        except sqlite3.Error as e:
+            print(e)
+
+    def create_user(self, username, password, role='user'):
+        password_hash = generate_password_hash(password)
+        with self.conn as conn:
+            conn.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+                          (username, password_hash, role))
+        return self.get_user(username)
+
+    def get_user(self, username):
+        with self.conn as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users WHERE username=?", (username,))
+            rows = cur.fetchall()
+            if rows:
+                return UserRow(rows[0])
+            return None
+
+    def get_user_by_id(self, user_id):
+        with self.conn as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users WHERE id=?", (user_id,))
+            rows = cur.fetchall()
+            if rows:
+                return UserRow(rows[0])
+            return None
+
+    def get_all_users(self):
+        with self.conn as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM users")
+            rows = cur.fetchall()
+            return [UserRow(row) for row in rows]
+
+    def update_user(self, id, username, role):
+        with self.conn as conn:
+            conn.execute("UPDATE users SET username=?, role=? WHERE id=?", (username, role, id))
+
+    def delete_user(self, id):
+        with self.conn as conn:
+            conn.execute("DELETE FROM users WHERE id=?", (id,))
+
+class UserRow:
+    def __init__(self, row):
+        self.id = row[0]
+        self.username = row[1]
+        self.password = row[2]
+        self.role = row[3]
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+#========================================================================================================#
+#========================================================================================================#
+#                                                                                                        #
+#                                            PUMP DATABASE STUFFS                                        #
+#                                                                                                        #
+#========================================================================================================#
 # Create connection to db
 def create_connection():
     """Create a connection to the SQLite database."""
@@ -18,11 +98,7 @@ def create_connection():
     except sqlite3.Error as e:
         print(e)
     return conn
-#========================================================================================================#
-#                                                                                                        #
-#                                            PUMP DATABASE STUFFS                                        #
-#                                                                                                        #
-#========================================================================================================#
+
 # Create pump log table
 def create_tables():
     try:
@@ -304,3 +380,6 @@ def get_total_events():
     finally:
         if conn:
             conn.close()
+#========================================================================================================#
+
+

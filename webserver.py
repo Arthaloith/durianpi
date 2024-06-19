@@ -3,7 +3,7 @@
 #                                               LIBRARY IMPORTS                                          #
 #                                                                                                        #
 #========================================================================================================#
-from flask import Flask, Response,redirect, render_template, jsonify, request, url_for
+from flask import Flask, Response,redirect, render_template, jsonify, request, url_for, flash
 import db
 import os
 import pumpcontrol
@@ -16,6 +16,8 @@ import numpy as np
 import subprocess
 import adafruit_dht
 import board
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user, login_required
+from db import User
 #========================================================================================================#
 #========================================================================================================#
 #                                                                                                        #
@@ -23,6 +25,11 @@ import board
 #                                                                                                        #
 #========================================================================================================#
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "amogussus"
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+user_db = User('cache/database.db')
 #camera module
 picam2 = Picamera2()
 preview_config = picam2.create_preview_configuration()
@@ -38,6 +45,7 @@ dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
 #                                                                                                        #
 #========================================================================================================#
 @app.route('/')
+@login_required
 def index():
     latest_pump_run = db.get_latest_pump_run()
     pump_history = db.get_pump_history_only_5()
@@ -54,6 +62,7 @@ def index():
     return render_template('index.html', soil_value=soil_moisture, latest_pump_run=latest_pump_run, pump_history=pump_history, soil_moisture=soil_moisture, ram_usage=ram_usage, cpu_usage=cpu_usage, cpu_temp=cpu_temp,temperature=temperature_c, humidity=humidity)
 
 @app.route('/profiles')
+@login_required
 def profiles():
     profiles = db.get_all_profiles()
     active_profile = db.get_active_profile()
@@ -88,31 +97,37 @@ def get_values():
 #==============================================PUMP CONTROL================================================#
 
 @app.route('/force_water', methods=['POST'])
+@login_required
 def force_water():
     os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py runnow")
     return render_template('force_water.html')
 
 @app.route('/skip_water', methods=['POST'])
+@login_required
 def skip_water():
     os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py skip &")
     return render_template('skip_water.html')
 
 @app.route('/poll', methods=['POST'])
+@login_required
 def poll():
     os.popen(f"{consts.PYTHON_VENV_LOCATION} pumpcontrol.py check &")
     return render_template('poll.html')
 #==============================================PUMP HISTORY================================================#
 @app.route('/history', methods=['POST'])
+@login_required
 def history():
     pump_history = db.get_pump_history()
     return render_template('history.html', pump_history=pump_history)
 
 @app.route('/clear', methods=['POST'])
+@login_required
 def clearHistory():
     pump_history = db.clear_pump_history()
     return render_template('clear.html', pump_history=pump_history)
 #=============================================PROFILE MANAGEMENT============================================#
 @app.route('/update_profile', methods=['POST'])
+@login_required
 def update_profile():
     name = request.form['profile_name']
     threshold = int(request.form['soil_moisture_threshold'])
@@ -121,12 +136,14 @@ def update_profile():
     return redirect(url_for('profiles'))
 
 @app.route('/select_profile', methods=['POST'])
+@login_required
 def select_profile():
     profile_id = request.form['profile_id']
     db.set_active_profile(profile_id)
     return redirect(url_for('profiles'))
 
 @app.route('/delete_profile/<int:profile_id>', methods=['POST'])
+@login_required
 def delete_profile(profile_id):
     db.delete_profile(profile_id)
     return redirect(url_for('profiles'))
@@ -142,6 +159,7 @@ def generate_camera_feed():
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         
 @app.route('/camera')
+@login_required
 def camera_feed():
     return Response(generate_camera_feed(), mimetype='multipart/x-mixed-replace; boundary=frame')
 #==============================================CRON MANAGEMENT================================================#
@@ -172,6 +190,7 @@ def add_predefined_cron_jobs():
         return False
 
 @app.route('/add_predefined_cronjob', methods=['POST'])
+@login_required
 def handle_add_predefined_cron_jobs():
     if add_predefined_cron_jobs():
         return redirect(url_for('cron_job_page'), code=302)  
@@ -179,6 +198,7 @@ def handle_add_predefined_cron_jobs():
         return "Failed to add cron jobs", 500
 
 @app.route('/add_cronjob', methods=['POST'])
+@login_required
 def handle_add_cron_jobs():
     minute = request.form['minute']
     hour = request.form['hour']
@@ -195,6 +215,7 @@ def handle_add_cron_jobs():
         return "Failed to add cron job", 500
     
 @app.route('/clear_cronjob', methods=['POST'])
+@login_required
 def clear_cronjob():
     try:
         subprocess.run("crontab -r", shell=True, check=True)
@@ -213,13 +234,15 @@ def get_cron_jobs():
         return None
     
 @app.route('/cron')
+@login_required
 def cron_job_page():
     cron_jobs = get_cron_jobs()
-    available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3','@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &', '']
+    available_commands = ['cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2','cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p4', 'cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py check', '@reboot cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python webserver.py &', '']
     return render_template('cron.html', available_commands=available_commands,cron_jobs=cron_jobs)
 
 #==============================================ANALYTICS=====================================================#
 @app.route('/analytics')
+@login_required
 def analytics():
     most_active_day, most_active_day_count = db.get_most_active_day()
     most_active_month, most_active_month_count = db.get_most_active_month()
@@ -234,6 +257,78 @@ def analytics():
                            least_active_day=least_active_day,
                            least_active_day_count=least_active_day_count,
                            total_events=total_events)
+#==============================================USER AUTHENTICATION===========================================#
+class UserLogin(UserMixin):
+    def __init__(self, user_id):
+        self.id = user_id
+
+    def get_id(self):
+        return str(self.id)
+    
+    
+    def is_admin(self):
+        user = user_db.get_user_by_id(self.id)
+        return user is not None and user.role == 'admin'
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = user_db.get_user_by_id(user_id)
+    if user:
+        return UserLogin(user.id)
+    return None
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        user = user_db.get_user(username)
+        if user and user.check_password(password):
+            login_user(UserLogin(user.id))
+            return redirect(url_for("index"))
+        return jsonify({"error": "Invalid username or password"}), 401
+    return render_template("login.html")
+
+@app.route("/logout", methods=["GET", "POST"])
+@login_required
+def logout():
+    if request.method == "POST":
+        logout_user()
+        return redirect(url_for("login"))
+    else:
+        return redirect(url_for("logout"))
+
+@app.route("/admin", methods=["GET", "POST"])
+@login_required
+def admin_page():
+    if not current_user.is_admin():
+        flash("Chỉ có admin mới được truy cập trang quản trị", "error")
+        return redirect(url_for("index"))
+
+    if request.method == "POST":
+        if request.form["action"] == "create":
+            username = request.form["username"]
+            password = request.form["password"]
+            role = request.form["role"]
+
+            # Check if the username already exists
+            existing_user = user_db.get_user(username)
+            if existing_user:
+                flash(f"Tên người dùng '{username}' tồn tại.", "error")
+                return redirect(url_for("admin_page"))
+
+            user_db.create_user(username, password, role)
+        elif request.form["action"] == "update":
+            user_id = request.form["user_id"]
+            username = request.form["username"]
+            role = request.form["role"]
+            user_db.update_user(user_id, username, role)
+        elif request.form["action"] == "delete":
+            user_id = request.form["user_id"]
+            user_db.delete_user(user_id)
+
+    users = user_db.get_all_users()
+    return render_template("admin.html", users=users)
 #==============================================SYSTEM CONTROL================================================#
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
