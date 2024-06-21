@@ -63,13 +63,6 @@ def forceRun():
         entry = (readable_timestamp, 'Manual pump run', duration_str)
         db.log_pump_run(entry)
 
-def skipPump():
-    readable_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    duration_str = f'{consts.PUMP_DURATION} seconds'
-    entry = (readable_timestamp, 'Pump Run', duration_str)
-
-    db.log_pump_run(entry)
-
 def get_soil_moisture():
     soil_value = chan.value / 64
     moisture_percentage = 100 - math.ceil((soil_value / 1024) * 100)

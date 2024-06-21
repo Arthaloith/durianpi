@@ -5,4 +5,6 @@
 (crontab -l ; echo "0 6,18 * 1-2 0-6 cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p1") | crontab -
 (crontab -l ; echo "0 6,18 * 3-4 0-6 cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p2") | crontab -
 (crontab -l ; echo "0 6,18 * 5-6 0-6 cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p3") | crontab -
+(crontab -l ; echo "0 6,18 * 7-8 0-6 cd /home/admin/Projects/durianpi && /home/admin/Projects/durianpi/myenv/bin/python pumpcontrol.py p4") | crontab -
+
 
